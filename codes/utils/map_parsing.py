@@ -2,10 +2,6 @@ import os
 from typing import Any
 
 
-def call_error() -> None:
-    raise Exception()
-
-
 # get_path(
 #  "maps", "easy", "01_linear_path.txt"
 #           )
@@ -13,14 +9,14 @@ def get_path(*args: Any) -> str:
     return os.path.join(*args)
 
 
-def get_metadata(data_key: str, data: str | None = None) -> dict[str, Any]:
+def get_metadata(data_key: str, data: str | None = None) -> dict[str | None, Any]:
     if data_key.__contains__("hub"):
         capacity = "max_drones"
         zone = "zone"
     else:
         capacity = "max_link_capacity"
         zone = None
-    result: dict[str, Any] = {
+    result: dict[str | None, Any] = {
         "color": None,
         capacity: 1,
         zone: "normal" if data_key.__contains__("hub") else None,
@@ -28,24 +24,22 @@ def get_metadata(data_key: str, data: str | None = None) -> dict[str, Any]:
     if data is None:
         return result
     metadata: list[str] = data.strip("[]").split()
-    # print(metadata)
     for val in metadata:
-        # print("val", val, sep=" => ")
         dt = val.strip().split("=")
         key: str = dt[0].strip()
         value: str | Any = dt[1].strip()
         if value.isdigit():
             value = int(value)
         result.update({key: value})
-        # print(key, value, sep=" => ")
-    # print("result =>", result)
     return result
 
 
-def get_hub_data(data: str) -> dict[str, Any]:
+def get_hub_data(key: str, data: str) -> dict[str, Any]:
     result: dict[str, Any] = {}
     line: list[str] = data.split(maxsplit=3)
     result["name"] = line[0].strip()
+    result["start"] = True if key == "start_hub" else False
+    result["end"] = True if key == "end_hub" else False
     result["x"] = int(line[1].strip())
     result["y"] = int(line[2].strip())
     result["metadata"] = get_metadata("hub", line[3] if len(line) == 4 else None)
@@ -80,28 +74,23 @@ def parsing(file_path: str) -> dict[str, Any] | None:
                     if key in data:
                         raise Exception("Map error!!")
                     data[key] = int(value)
-                elif key == "start_hub":
-                    if key in data:
-                        raise Exception("Map Error!!")
-                    data[key] = get_hub_data(value)
-                elif key == "end_hub":
-                    if key in data:
-                        raise Exception("Map Error!!")
-                    data[key] = get_hub_data(value)
-                elif key == "hub":
-                    if key not in data:
-                        data[key] = []
-                    data[key].append(get_hub_data(value))
+                # elif key == "start_hub":
+                #     if key in data:
+                #         raise Exception("Map Error!!")
+                #     data[key] = get_hub_data(value)
+                # elif key == "end_hub":
+                #     if key in data:
+                #         raise Exception("Map Error!!")
+                #     data[key] = get_hub_data(value)
+                elif key.__contains__("hub"):
+                    if "hub" not in data:
+                        data["hub"] = []
+                    data["hub"].append(get_hub_data(key, value))
                 elif key == "connection":
                     if key not in data:
                         data[key] = []
                     data[key].append(get_connection(value))
-        if (
-            "hub" not in data
-            or "start_hub" not in data
-            or "end_hub" not in data
-            or "connection" not in data
-        ):
+        if "nb_drones" not in data or "hub" not in data or "connection" not in data:
             raise Exception("Map error")
         return data
     except Exception as e:
