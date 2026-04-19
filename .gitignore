@@ -6,4 +6,5 @@ fly-ing.en.subject.pdf
 */*.css
 *.pyc
 */*.pyc
+map.json
 gpt.txt
