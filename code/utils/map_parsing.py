@@ -13,81 +13,98 @@ def get_path(*args: Any) -> str:
     return os.path.join(*args)
 
 
-def get_metadata(data_key: str, data: str) -> dict[str, Any]:
-    if data_key == "connection":
-        max_occupation = "max_link_capacity"
+def get_metadata(data_key: str, data: str | None = None) -> dict[str, Any]:
+    if data_key.__contains__("hub"):
+        capacity = "max_drones"
+        zone = "zone"
     else:
-        max_occupation = "max_drones"
+        capacity = "max_link_capacity"
+        zone = None
     result: dict[str, Any] = {
-        max_occupation: 1,
-        "zone": "normal" if data_key == "hub" else None,
         "color": None,
+        capacity: 1,
+        zone: "normal" if data_key.__contains__("hub") else None,
     }
+    if data is None:
+        return result
     metadata: list[str] = data.strip("[]").split()
-    if not metadata:
-        return data
-    for el in metadata:
-        line: list[str] = el.split("=")
-        key: str = line[0].strip()
-        value: str | Any = line[1].strip()
+    # print(metadata)
+    for val in metadata:
+        # print("val", val, sep=" => ")
+        dt = val.strip().split("=")
+        key: str = dt[0].strip()
+        value: str | Any = dt[1].strip()
         if value.isdigit():
-            result[key] = int(value)
-            continue
-        if data_key == "connection" and (key in ("zone")):
-            continue
-        if data_key in ("hub", "start_hub", "end_hub") and key == "max_link_capacity":
-            continue
-        result[key] = value
+            value = int(value)
+        result.update({key: value})
+        # print(key, value, sep=" => ")
+    # print("result =>", result)
     return result
 
 
-def get_info(key: str, metadata: str) -> dict[str, Any]:
-    parsed: dict[str, Any] = {}
-    if key == "connection":
-        data = metadata.split(" ")
-        conection = data[0].strip().split("-")
-        parsed["a"] = conection[0].strip()
-        parsed["b"] = conection[1].strip()
-        if len(data) >= 2:
-            parsed["metadata"] = get_metadata(key, data[1])
-    else:
-        value: str | Any = metadata.split()
-        parsed["hub_name"] = value[0].strip()
-        parsed["x"] = int(value[1])
-        parsed["y"] = int(value[2])
-        if len(value) >= 4:
-            parsed["metadata"] = get_metadata(key, value[3])
-    return parsed
+def get_hub_data(data: str) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    line: list[str] = data.split(maxsplit=3)
+    result["name"] = line[0].strip()
+    result["x"] = int(line[1].strip())
+    result["y"] = int(line[2].strip())
+    result["metadata"] = get_metadata("hub", line[3] if len(line) == 4 else None)
+    return result
 
 
-# map_info is a list of dict[str, Any]
-def valid_map(map_info: list[dict[str, Any]]) -> bool:
-    required_field = {"nb_drones", "start_hub", "end_hub", "hub", "connection"}
-    # is_required: bool = all(required_field.issubset(dic.keys() for dic in map_info))
-    return True
+def get_connection(data: str) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    val: list[str] = data.split(maxsplit=2)
+    points: list[str] = val[0].strip().split("-")
+    result["a"] = points[0]
+    result["b"] = points[1]
+    result["metadata"] = get_metadata("con", val[1] if len(val) == 2 else None)
+    return result
 
 
-def parsing(file_path: str) -> list[dict[str, Any]]:
-    parsed: list[dict[str, Any]] = []
+def parsing(file_path: str) -> dict[str, Any] | None:
+    data: dict[str, Any] = {}
     try:
-        with open(file_path, encoding="utf-8", mode="r") as file:
+        with open(file_path, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
             for line in lines:
-                if line.startswith("#"):
+                new_line: str = line.strip()
+                if new_line.startswith("#"):
                     continue
-                new_dict: dict[str, Any] = {}
-                curr_line: list[str] = line.strip().split(":")
+                curr_line: list[str] = new_line.split(":", maxsplit=2)
                 if len(curr_line) != 2:
                     continue
                 key: str = curr_line[0].strip()
-                value: str | Any = curr_line[1].strip()
-                if value.isdigit():
-                    new_dict[key] = int(value)
-                else:
-                    new_dict[key] = get_info(key, value)
-                parsed.append(new_dict)
-        if not valid_map(parsed):
-            call_error()
-        return parsed
+                value: Any = curr_line[1].strip()
+                if key == "nb_drones":
+                    if key in data:
+                        raise Exception("Map error!!")
+                    data[key] = int(value)
+                elif key == "start_hub":
+                    if key in data:
+                        raise Exception("Map Error!!")
+                    data[key] = get_hub_data(value)
+                elif key == "end_hub":
+                    if key in data:
+                        raise Exception("Map Error!!")
+                    data[key] = get_hub_data(value)
+                elif key == "hub":
+                    if key not in data:
+                        data[key] = []
+                    data[key].append(get_hub_data(value))
+                elif key == "connection":
+                    if key not in data:
+                        data[key] = []
+                    data[key].append(get_connection(value))
+        if (
+            "hub" not in data
+            or "start_hub" not in data
+            or "end_hub" not in data
+            or "connection" not in data
+        ):
+            raise Exception("Map error")
+        return data
     except Exception as e:
+        print(data)
         print(e)
+        return None
