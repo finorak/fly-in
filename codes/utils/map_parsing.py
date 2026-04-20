@@ -5,11 +5,12 @@ from typing import Any
 # get_path(
 #  "maps", "easy", "01_linear_path.txt"
 #           )
-def get_path(*args: Any) -> str:
+def get_path(*args: Any) -> Any:
     return os.path.join(*args)
 
 
-def get_metadata(data_key: str, data: str | None = None) -> dict[str | None, Any]:
+def get_metadata(data_key: str,
+                 data: str | None = None) -> dict[str | None, Any]:
     if data_key.__contains__("hub"):
         capacity = "max_drones"
         zone = "zone"
@@ -42,7 +43,8 @@ def get_hub_data(key: str, data: str) -> dict[str, Any]:
     result["end"] = True if key == "end_hub" else False
     result["x"] = int(line[1].strip())
     result["y"] = int(line[2].strip())
-    result["metadata"] = get_metadata("hub", line[3] if len(line) == 4 else None)
+    result["metadata"] = get_metadata(
+            "hub", line[3] if len(line) == 4 else None)
     return result
 
 
@@ -52,7 +54,8 @@ def get_connection(data: str) -> dict[str, Any]:
     points: list[str] = val[0].strip().split("-")
     result["a"] = points[0]
     result["b"] = points[1]
-    result["metadata"] = get_metadata("con", val[1] if len(val) == 2 else None)
+    result["metadata"] = get_metadata(
+            "con", val[1] if len(val) == 2 else None)
     return result
 
 
@@ -90,7 +93,11 @@ def parsing(file_path: str) -> dict[str, Any] | None:
                     if key not in data:
                         data[key] = []
                     data[key].append(get_connection(value))
-        if "nb_drones" not in data or "hub" not in data or "connection" not in data:
+        if (
+                "nb_drones" not in data
+                or "hub" not in data
+                or "connection" not in data
+        ):
             raise Exception("Map error")
         return data
     except Exception as e:

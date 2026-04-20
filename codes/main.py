@@ -7,11 +7,13 @@ from settings import WIDTH, HEIGHT, BACKGROUND_COLOR
 
 
 class App:
-    def __init__(self):
+    def __init__(self) -> None:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("App")
         try:
-            self.config = parsing(get_path("maps", "easy", "01_linear_path.txt"))
+            self.config = parsing(
+                    get_path("maps", "easy", "01_linear_path.txt")
+                    )
         except Exception as e:
             print(e)
             print("Aborting...")
@@ -21,7 +23,7 @@ class App:
         self.board = Board(self.config, 10, 10)
         self.running = True
 
-    def run(self):
+    def run(self) -> None:
         while self.running:
             self.draw(self.screen)
             for event in pygame.event.get():
@@ -31,7 +33,7 @@ class App:
             pygame.display.update()
         pygame.quit()
 
-    def draw(self, screen: pygame.Surface):
+    def draw(self, screen: pygame.Surface) -> None:
         screen.fill(BACKGROUND_COLOR)
         self.board.draw(screen)
 

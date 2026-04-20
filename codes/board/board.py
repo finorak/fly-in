@@ -1,11 +1,12 @@
 from typing import Any
 import pygame
 from board.cell import Cell
-from settings import WIDTH, HEIGHT, BACKGROUND_COLOR, BLUE
+from settings import WIDTH, HEIGHT, BACKGROUND_COLOR, BLUE, ZONE_COSTS
 
 
 class Board:
-    def __init__(self, config: dict[str | None, Any], rows: int, cols: int) -> None:
+    def __init__(self, config: dict[str | None, Any],
+                 rows: int, cols: int) -> None:
         self.rows = rows
         self.cols = cols
         self.cell_width = WIDTH / self.rows
@@ -28,6 +29,10 @@ class Board:
         cell = Cell(row, col, cell_width, cell_height)
         for hub in self.config["hub"]:
             if hub["x"] == row and hub["y"] == col:
+                cell.name = hub["name"]
+                cell.zone = hub["metadata"]["zone"]
+                cell.zon_cost = ZONE_COSTS[cell.zone]
+                cell.max_drones = hub["metadata"]["max_drones"]
                 color = hub["metadata"]["color"]
                 if color is None:
                     color = BLUE
@@ -47,6 +52,7 @@ class Board:
                         (self.cell_width, self.cell_height),
                     ),
                 )
+
         # self.draw_grid(screen)
 
     # def draw_grid(self, screen: pygame.Surface) -> None:
