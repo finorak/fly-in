@@ -9,9 +9,9 @@ from settings import WIDTH, HEIGHT, BACKGROUND_COLOR
 
 
 class App:
-    def __init__(self) -> None:
+    def __init__(self, args: str | None = None) -> None:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("App")
+        pygame.display.set_caption("Fly-in")
         try:
             self.config: dict[str, Any] | None = parsing(
                     get_path(
@@ -31,18 +31,37 @@ class App:
         self.cell_size = (
                 self.board.cell_width, self.board.cell_height
                 )
+        end_point = self.get_end_point(self.config['hub'])
+        x, y = end_point[0]
+        end_x, end_y = end_point[1]
         self.players: list[Player] = [Player(
-            self.config['start_hub']['x'],
-            self.config['start_hub']['y'],
+            x,
+            y,
             self.cell_size,
-            (self.config['end_hub']['x'], self.config['end_hub']['y']),
+            (end_x, end_y),
             "flight_jet.png")
             for _ in range(self.config['nb_drones'])]
         self.running = True
 
+    def get_end_point(self,
+                      config: list[dict[str | None, Any]]
+                      ) -> list[tuple[int, int]]:
+        x: int = -1
+        y: int = -1
+        end_x: int = -1
+        end_y: int = -1
+        for hub in config:
+            if hub['start']:
+                x, y = hub['x'], hub['y']
+            if hub['end']:
+                end_x, end_y = hub['x'], hub['y']
+        return [(x, y), (end_x, end_y)]
+
     def run(self) -> None:
+        clock = pygame.time.Clock()
         while self.running:
-            self.draw(self.screen)
+            dt = clock.tick() / 1000
+            self.draw(self.screen, dt)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -58,14 +77,14 @@ class App:
             pygame.display.update()
         pygame.quit()
 
-    def draw(self, screen: pygame.Surface) -> None:
+    def draw(self, screen: pygame.Surface, dt: float) -> None:
         screen.fill(BACKGROUND_COLOR)
-        self.board.draw(screen)
-        self.draw_player(screen)
+        self.board.draw(screen, dt)
+        self.draw_player(screen, dt)
 
-    def draw_player(self, screen: pygame.Surface) -> None:
+    def draw_player(self, screen: pygame.Surface, dt: float) -> None:
         for player in self.players:
-            player.draw_player(screen)
+            player.draw_player(screen, dt)
 
 
 if __name__ == "__main__":

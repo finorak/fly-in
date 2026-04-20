@@ -8,13 +8,13 @@ from settings import (
 
 
 class Board:
-    def __init__(self, config: dict[str | None, Any],
+    def __init__(self, config: dict[str, Any],
                  rows: int, cols: int) -> None:
         self.rows = rows
         self.cols = cols
         self.cell_width = WIDTH / self.cols
         self.cell_height = HEIGHT / self.rows
-        self.config: dict[str | None, Any] = config
+        self.config: dict[str, Any] = config
         self.cells: list[list[Cell]] = [
             [
                 self.get_cell(i, j, self.cell_width, self.cell_height)
@@ -22,12 +22,6 @@ class Board:
             ]
             for i in range(self.rows)
         ]
-        self.init_cell(self.config['start_hub']['x'],
-                       self.config['start_hub']['y'],
-                       'start_hub')
-        self.init_cell(self.config['end_hub']['x'],
-                       self.config['end_hub']['y'],
-                       'end_hub')
 
     def get_cell(
         self, row: int, col: int, cell_width: float, cell_height: float
@@ -50,19 +44,7 @@ class Board:
             cell.color = BACKGROUND_COLOR
         return cell
 
-    def init_cell(self, row: int, col: int, value: str) -> None:
-        cell = self.cells[row][col]
-        if self.config[value]['metadata']['color']:
-            color = self.config[value]['metadata']['color']
-        else:
-            color = ZONE_COLOR['end']
-        cell.color = color
-        cell.name = self.config[value]["name"]
-        cell.zone = self.config[value]["metadata"]["zone"]
-        cell.zone_cost = ZONE_COSTS[self.config[value]['metadata']['zone']]
-        cell.max_drones = self.config[value]["metadata"]["max_drones"]
-
-    def draw(self, screen: pygame.Surface) -> None:
+    def draw(self, screen: pygame.Surface, dt) -> None:
         for row in range(self.cols):
             for col in range(self.rows):
                 cell = self.cells[row][col]
@@ -71,7 +53,9 @@ class Board:
                         screen,
                         cell.color,
                         (
-                            (row * self.cell_width, col * self.cell_height),
+                            (
+                                row * self.cell_width,
+                                 col * self.cell_height),
                             (self.cell_width, self.cell_height),
                         ),
                     )
@@ -82,7 +66,9 @@ class Board:
                         screen,
                         cell.color,
                         (
-                            (row * self.cell_width, col * self.cell_height),
+                            (
+                                row * self.cell_width,
+                                col * self.cell_height),
                             (self.cell_width, self.cell_height),
                         ),
                     )

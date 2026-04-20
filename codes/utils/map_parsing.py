@@ -48,6 +48,8 @@ def get_hub_data(key: str, data: str) -> dict[str, Any]:
     result["name"] = line[0].strip()
     result["x"] = int(line[1].strip())
     result["y"] = int(line[2].strip())
+    result['start'] = True if key == "start_hub" else False
+    result['end'] = True if key == "end_hub" else False
     result["metadata"] = get_metadata(
             "hub", line[3] if len(line) == 4 else None)
     return result
@@ -90,7 +92,7 @@ def parsing(file_path: str) -> dict[str, Any] | None:
                     if key in data:
                         raise Exception("Map Error!!")
                     data[key] = get_hub_data(key, value)
-                elif key == "hub":
+                if key.__contains__("hub"):
                     if "hub" not in data:
                         data["hub"] = []
                     data["hub"].append(get_hub_data(key, value))
@@ -102,8 +104,6 @@ def parsing(file_path: str) -> dict[str, Any] | None:
                 "nb_drones" not in data
                 or data['nb_drones'] <= 0
                 or "hub" not in data
-                or "start_hub" not in data
-                or "end_hub" not in data
                 or "connection" not in data
         ):
             raise Exception("Map error")
