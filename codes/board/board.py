@@ -1,7 +1,10 @@
 from typing import Any
 import pygame
 from board.cell import Cell
-from settings import WIDTH, HEIGHT, BACKGROUND_COLOR, BLUE, ZONE_COSTS
+from settings import (
+        WIDTH, HEIGHT, BACKGROUND_COLOR,
+        BLUE, ZONE_COSTS, ZONE_COLOR,
+        )
 
 
 class Board:
@@ -9,16 +12,22 @@ class Board:
                  rows: int, cols: int) -> None:
         self.rows = rows
         self.cols = cols
-        self.cell_width = WIDTH / self.rows
-        self.cell_height = HEIGHT / self.cols
-        self.config = config
+        self.cell_width = WIDTH / self.cols
+        self.cell_height = HEIGHT / self.rows
+        self.config: dict[str | None, Any] = config
         self.cells: list[list[Cell]] = [
             [
                 self.get_cell(i, j, self.cell_width, self.cell_height)
-                for i in range(self.cols)
+                for j in range(self.cols)
             ]
-            for j in range(self.rows)
+            for i in range(self.rows)
         ]
+        self.init_cell(self.config['start_hub']['x'],
+                       self.config['start_hub']['y'],
+                       'start_hub')
+        self.init_cell(self.config['end_hub']['x'],
+                       self.config['end_hub']['y'],
+                       'end_hub')
 
     def get_cell(
         self, row: int, col: int, cell_width: float, cell_height: float
@@ -31,9 +40,9 @@ class Board:
             if hub["x"] == row and hub["y"] == col:
                 cell.name = hub["name"]
                 cell.zone = hub["metadata"]["zone"]
-                cell.zon_cost = ZONE_COSTS[cell.zone]
+                cell.zone_cost = ZONE_COSTS[cell.zone]
                 cell.max_drones = hub["metadata"]["max_drones"]
-                color = hub["metadata"]["color"]
+                color: str | Any = hub["metadata"]["color"]
                 if color is None:
                     color = BLUE
                 cell.color = color.strip()
@@ -41,17 +50,42 @@ class Board:
             cell.color = BACKGROUND_COLOR
         return cell
 
+    def init_cell(self, row: int, col: int, value: str) -> None:
+        cell = self.cells[row][col]
+        if self.config[value]['metadata']['color']:
+            color = self.config[value]['metadata']['color']
+        else:
+            color = ZONE_COLOR['end']
+        cell.color = color
+        cell.name = self.config[value]["name"]
+        cell.zone = self.config[value]["metadata"]["zone"]
+        cell.zone_cost = ZONE_COSTS[self.config[value]['metadata']['zone']]
+        cell.max_drones = self.config[value]["metadata"]["max_drones"]
+
     def draw(self, screen: pygame.Surface) -> None:
         for row in range(self.cols):
             for col in range(self.rows):
-                pygame.draw.rect(
-                    screen,
-                    self.cells[row][col].color,
-                    (
-                        (col * self.cell_width, row * self.cell_height),
-                        (self.cell_width, self.cell_height),
-                    ),
-                )
+                cell = self.cells[row][col]
+                try:
+                    pygame.draw.rect(
+                        screen,
+                        cell.color,
+                        (
+                            (row * self.cell_width, col * self.cell_height),
+                            (self.cell_width, self.cell_height),
+                        ),
+                    )
+                except ValueError as e:
+                    print(e)
+                    cell.color = ZONE_COLOR[cell.zone]
+                    pygame.draw.rect(
+                        screen,
+                        cell.color,
+                        (
+                            (row * self.cell_width, col * self.cell_height),
+                            (self.cell_width, self.cell_height),
+                        ),
+                    )
 
         # self.draw_grid(screen)
 

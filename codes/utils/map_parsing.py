@@ -13,14 +13,21 @@ def get_metadata(data_key: str,
                  data: str | None = None) -> dict[str | None, Any]:
     if data_key.__contains__("hub"):
         capacity = "max_drones"
-        zone = "zone"
     else:
         capacity = "max_link_capacity"
+    if data_key in ("end_hub", "start_hub"):
+        zone_value = "priority"
+        zone = "zone"
+    elif data_key == 'hub':
+        zone_value = "normal"
+        zone = "zone"
+    else:
+        zone_value = None
         zone = None
     result: dict[str | None, Any] = {
         "color": None,
         capacity: 1,
-        zone: "normal" if data_key.__contains__("hub") else None,
+        zone: zone_value,
     }
     if data is None:
         return result
@@ -39,8 +46,6 @@ def get_hub_data(key: str, data: str) -> dict[str, Any]:
     result: dict[str, Any] = {}
     line: list[str] = data.split(maxsplit=3)
     result["name"] = line[0].strip()
-    result["start"] = True if key == "start_hub" else False
-    result["end"] = True if key == "end_hub" else False
     result["x"] = int(line[1].strip())
     result["y"] = int(line[2].strip())
     result["metadata"] = get_metadata(
@@ -77,15 +82,15 @@ def parsing(file_path: str) -> dict[str, Any] | None:
                     if key in data:
                         raise Exception("Map error!!")
                     data[key] = int(value)
-                # elif key == "start_hub":
-                #     if key in data:
-                #         raise Exception("Map Error!!")
-                #     data[key] = get_hub_data(value)
-                # elif key == "end_hub":
-                #     if key in data:
-                #         raise Exception("Map Error!!")
-                #     data[key] = get_hub_data(value)
-                elif key.__contains__("hub"):
+                elif key == "start_hub":
+                    if key in data:
+                        raise Exception("Map Error!!")
+                    data[key] = get_hub_data(key, value)
+                elif key == "end_hub":
+                    if key in data:
+                        raise Exception("Map Error!!")
+                    data[key] = get_hub_data(key, value)
+                elif key == "hub":
                     if "hub" not in data:
                         data["hub"] = []
                     data["hub"].append(get_hub_data(key, value))

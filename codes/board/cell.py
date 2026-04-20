@@ -22,4 +22,7 @@ class Cell:
         self.zone = zone
         self.max_drones = max_drones
         self.name = name
-        self.zon_cost = zone_cost
+        self.zone_cost = zone_cost
+
+    def mouse_hover(self, pos: tuple[float, float]) -> None:
+        pass
