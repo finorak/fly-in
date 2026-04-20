@@ -100,7 +100,10 @@ def parsing(file_path: str) -> dict[str, Any] | None:
                     data[key].append(get_connection(value))
         if (
                 "nb_drones" not in data
+                or data['nb_drones'] <= 0
                 or "hub" not in data
+                or "start_hub" not in data
+                or "end_hub" not in data
                 or "connection" not in data
         ):
             raise Exception("Map error")

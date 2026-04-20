@@ -20,9 +20,6 @@ class Player:
                     )), (self.size[0] // 2, self.size[1] // 2)
                 ).convert_alpha()
 
-    def find_path(self) -> Any:
-        pass
-
     def draw_player(self, screen: pygame.Surface) -> None:
         img_rect = self.image.get_rect()
         img_rect.center = (
@@ -30,3 +27,6 @@ class Player:
                 self.y * self.size[1] + self.size[1] // 2,
                 )
         screen.blit(self.image, img_rect)
+
+    def find_path(self) -> Any:
+        pass
