@@ -1,10 +1,11 @@
 import sys
 import json
 from typing import Any
-from player.player import Player
 import pygame
 from board.board import Board
-from utils.map_parsing import parsing, get_path
+from player.player import Player
+from utils.parsing import parsing, get_path
+from utils.map_utils import get_dimention
 from settings import WIDTH, HEIGHT, BACKGROUND_COLOR
 
 
@@ -27,18 +28,18 @@ class App:
             sys.exit(1)
         with open("map.json", "w") as file:
             json.dump(self.config, file, indent=4)
-        self.board = Board(self.config, 10, 10)
+        dimention: tuple[int, int] = get_dimention(self.config['hub'])
+        self.size: int = max(dimention)
+        self.board = Board(self.config, self.size, self.size)
         self.cell_size = (
                 self.board.cell_width, self.board.cell_height
                 )
         end_point = self.get_end_point(self.config['hub'])
-        x, y = end_point[0]
         end_x, end_y = end_point[1]
         self.players: list[Player] = [Player(
-            x,
-            y,
+            *end_point[0],
             self.cell_size,
-            (end_x, end_y),
+            self.board.cells[end_x][end_y],
             "flight_jet.png")
             for _ in range(self.config['nb_drones'])]
         self.running = True
@@ -61,7 +62,11 @@ class App:
         clock = pygame.time.Clock()
         while self.running:
             dt = clock.tick() / 1000
+            mouse_pos: tuple[int, int] = pygame.mouse.get_pos()
+            x = mouse_pos[0] // self.cell_size[0]
+            y = mouse_pos[1] // self.cell_size[1]
             self.draw(self.screen, dt)
+            self.hover_effect(int(x), int(y))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -76,6 +81,12 @@ class App:
                     print(name, (row, col))
             pygame.display.update()
         pygame.quit()
+
+    def hover_effect(self, x: int, y: int) -> None:
+        if not 0 <= x < self.size and 0 <= y < self.size:
+            return None
+        if self.board.cells[x][y].name is None:
+            return None
 
     def draw(self, screen: pygame.Surface, dt: float) -> None:
         screen.fill(BACKGROUND_COLOR)

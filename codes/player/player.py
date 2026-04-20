@@ -1,7 +1,9 @@
+import math
 from typing import Any
 import pygame
 import random
-from utils.map_parsing import get_path
+from utils.parsing import get_path
+from board.cell import Cell
 
 
 class Player:
@@ -9,11 +11,11 @@ class Player:
                  x: int,
                  y: int,
                  size: tuple[float, float],
-                 end_pos: tuple[int, int],
+                 end_hub: Cell,
                  image_name: Any) -> None:
         self.x = x
         self.y = y
-        self.end_pos = end_pos
+        self.end_hub = end_hub
         self.size = size
         self.direction = random.choice([-1, 1])
         self.angle: float = self.direction
@@ -34,9 +36,19 @@ class Player:
                 )
         screen.blit(new_img, img_rect)
 
-    def get_angle(self, dt: float) -> float:
-        self.angle += (90 * dt) % 360
+    def get_angle(self, dt: float, next_cell: Cell | None = None) -> float:
+        if next_cell is None:
+            next_cell = self.end_hub
+        self.angle = math.degrees(
+                math.atan2(
+                    -(next_cell.row - self.y),
+                    next_cell.col - self.x
+                    )
+                )
         return self.angle
 
-    def find_path(self) -> Any:
+    def find_path(self,
+                  cells: list[list[Cell]],
+                  curr_pos: tuple[int, int] = (0, 0)
+                  ) -> Any:
         pass

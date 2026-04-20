@@ -12,8 +12,9 @@ class Board:
                  rows: int, cols: int) -> None:
         self.rows = rows
         self.cols = cols
-        self.cell_width = WIDTH / self.cols
-        self.cell_height = HEIGHT / self.rows
+        self.cell_width = WIDTH / self.rows
+        self.cell_height = HEIGHT / self.cols
+        print(self.cell_width, self.cell_height)
         self.config: dict[str, Any] = config
         self.cells: list[list[Cell]] = [
             [
@@ -44,7 +45,7 @@ class Board:
             cell.color = BACKGROUND_COLOR
         return cell
 
-    def draw(self, screen: pygame.Surface, dt) -> None:
+    def draw(self, screen: pygame.Surface, dt: float) -> None:
         for row in range(self.cols):
             for col in range(self.rows):
                 cell = self.cells[row][col]
@@ -55,7 +56,7 @@ class Board:
                         (
                             (
                                 row * self.cell_width,
-                                 col * self.cell_height),
+                                col * self.cell_height),
                             (self.cell_width, self.cell_height),
                         ),
                     )
