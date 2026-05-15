@@ -17,12 +17,11 @@ class Board:
                  rows: int, cols: int) -> None:
         self.rows = rows
         self.cols = cols
-        self.cell_width = WIDTH / self.rows
-        self.cell_height = HEIGHT / self.cols
+        self.cell_size = (WIDTH / self.rows, HEIGHT / self.cols)
         self.config: dict[str, Any] = config
         self.cells: list[list[Cell]] = [
             [
-                self.get_cell(i, j, self.cell_width, self.cell_height)
+                self.get_cell(i, j, *self.cell_size)
                 for j in range(self.cols)
             ]
             for i in range(self.rows)
@@ -34,7 +33,7 @@ class Board:
         """
         TODO: Add a fixed color for the cell that isn't a hub
         """
-        cell = Cell(row, col, cell_width, cell_height)
+        cell = Cell(row, col, self.cell_size, "_")
         for hub in self.config["hub"]:
             if hub["x"] == row and hub["y"] == col:
                 cell.name = hub["name"]
@@ -49,7 +48,7 @@ class Board:
             cell.color = BACKGROUND_COLOR
         return cell
 
-    def draw(self, screen: pygame.Surface, dt: float) -> None:
+    def draw_board(self, screen: pygame.Surface, dt: float) -> None:
         for row in range(self.cols):
             for col in range(self.rows):
                 cell = self.cells[row][col]
@@ -59,9 +58,9 @@ class Board:
                         cell.color,
                         (
                             (
-                                row * self.cell_width,
-                                col * self.cell_height),
-                            (self.cell_width, self.cell_height),
+                                row * self.cell_size[0],
+                                col * self.cell_size[1]),
+                            (self.cell_size[0] // 1, self.cell_size[1] // 1),
                         ),
                     )
                 except ValueError as e:
@@ -72,28 +71,8 @@ class Board:
                         cell.color,
                         (
                             (
-                                row * self.cell_width,
-                                col * self.cell_height),
-                            (self.cell_width, self.cell_height),
+                                row * self.cell_size[0],
+                                col * self.cell_size[1]),
+                            (self.cell_size[0] // 1, self.cell_size[1] // 1),
                         ),
                     )
-
-        # self.draw_grid(screen)
-
-    # def draw_grid(self, screen: pygame.Surface) -> None:
-    #     for row in range(self.cols):
-    #         pygame.draw.line(
-    #             screen,
-    #             "black",
-    #             (0, row * self.cell_height),
-    #             (WIDTH, row * self.cell_height),
-    #             2,
-    #         )
-    #         for col in range(self.rows):
-    #             pygame.draw.line(
-    #                 screen,
-    #                 "black",
-    #                 (col * self.cell_width, 0),
-    #                 (col * self.cell_width, HEIGHT),
-    #                 2,
-    #             )

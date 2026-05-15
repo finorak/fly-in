@@ -6,9 +6,8 @@ class Cell:
         self,
         row: int,
         col: int,
-        cell_width: float,
-        cell_height: float,
-        name: str | None = None,
+        size: tuple[float, float],
+        name: str,
         color: Any = None,
         zone: str = "normal",
         zone_cost: int = 1,
@@ -16,7 +15,7 @@ class Cell:
     ) -> None:
         self.row = row
         self.col = col
-        self.cell_size = cell_width, cell_height
+        self.cell_size = size
         self.color = color
         self.zone = zone
         self.max_drones = max_drones

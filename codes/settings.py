@@ -1,6 +1,7 @@
 WIDTH = 900
 HEIGHT = 650
 TITLE = "FLY-ING"
+FRAME_LIMIT = 1000
 
 BACKGROUND_COLOR = (0, 0, 0)
 BLUE = (0, 0, 255)
@@ -9,6 +10,7 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 CYAN = (0, 255, 255)
 PURPLE = (128, 0, 128)
+END_ZONE_COLOR = (255, 255, 255)
 
 ZONE_COSTS = {
     "blocked": -1,

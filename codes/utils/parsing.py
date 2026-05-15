@@ -66,7 +66,7 @@ def get_connection(data: str) -> dict[str, Any]:
     return result
 
 
-def parsing(file_path: str) -> dict[str, Any] | None:
+def parsing(file_path: str) -> dict[str, Any]:
     data: dict[str, Any] = {}
     try:
         with open(file_path, mode="r", encoding="utf-8") as file:
@@ -109,5 +109,4 @@ def parsing(file_path: str) -> dict[str, Any] | None:
             raise Exception("Map error")
         return data
     except Exception as e:
-        print(e)
-        return None
+        raise ValueError(e)
