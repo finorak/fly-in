@@ -1,10 +1,15 @@
 from typing import Any
+
 import pygame
 from board.cell import Cell
 from settings import (
-        WIDTH, HEIGHT, BACKGROUND_COLOR,
-        BLUE, ZONE_COSTS, ZONE_COLOR,
-        )
+    BACKGROUND_COLOR,
+    BLUE,
+    HEIGHT,
+    WIDTH,
+    ZONE_COLOR,
+    ZONE_COSTS,
+)
 
 
 class Board:
@@ -14,7 +19,6 @@ class Board:
         self.cols = cols
         self.cell_width = WIDTH / self.rows
         self.cell_height = HEIGHT / self.cols
-        print(self.cell_width, self.cell_height)
         self.config: dict[str, Any] = config
         self.cells: list[list[Cell]] = [
             [

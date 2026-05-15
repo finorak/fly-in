@@ -1,7 +1,5 @@
-fly-in.maps.tar.gz
 .mypy_cache
 */.mypy_cache
-fly-ing.en.subject.pdf
 *.css
 */*.css
 *.pyc

@@ -1,5 +1,6 @@
 WIDTH = 900
 HEIGHT = 650
+TITLE = "FLY-ING"
 
 BACKGROUND_COLOR = (0, 0, 0)
 BLUE = (0, 0, 255)
@@ -14,6 +15,7 @@ ZONE_COSTS = {
     "normal": 1,
     "priority": 1,
     "restricted": 2,
+    "end_hub": 1
 }
 
 ZONE_COLOR = {

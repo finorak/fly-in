@@ -78,8 +78,8 @@ def parsing(file_path: str) -> dict[str, Any] | None:
                 curr_line: list[str] = new_line.split(":", maxsplit=2)
                 if len(curr_line) != 2:
                     continue
-                key: str = curr_line[0].strip()
-                value: Any = curr_line[1].strip()
+                key: str = curr_line[0].strip("\t ")
+                value: Any = curr_line[1].strip("\t ")
                 if key == "nb_drones":
                     if key in data:
                         raise Exception("Map error!!")
@@ -109,6 +109,5 @@ def parsing(file_path: str) -> dict[str, Any] | None:
             raise Exception("Map error")
         return data
     except Exception as e:
-        print(data)
         print(e)
         return None

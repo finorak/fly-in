@@ -5,6 +5,7 @@ PIP=./$(BIN_PATH)/pip
 PYTHON=./$(BIN_PATH)/python
 FLAKE=./$(BIN_PATH)/flake8
 MYPY=./$(BIN_PATH)/mypy
+BASE_DIR=codes
 
 install: $(VENV)
 	$(PIP) install --upgrade pip
@@ -17,19 +18,16 @@ $(VENV):
 	python3 -m venv $(VENV)
 
 run:
-	$(PYTHON) codes/$(NAME)
+	$(PYTHON) $(BASE_DIR)/$(NAME) 'maps/easy/01_linear_path.txt'
 
 debug:
-	$(PYTHON) -m pdb $(NAME)
+	$(PYTHON) -m pdb $(BASE_DIR)/$(NAME)
 
 flake:
 	$(FLAKE) --exclude=$(VENV) .
 
 lint: flake
 	$(MYPY) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
-
-lint-strict: flake
-	$(MYPY) --strict  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
 
 clean:
 	find . -name "*.pyc" -exec rm -rf {} +
@@ -40,4 +38,4 @@ fclean: clean
 
 re: fclean install
 
-.PHONY: clean re fclean install run lint lint-strict flake debug
+.PHONY: clean re fclean install run lint flake debug
