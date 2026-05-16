@@ -17,14 +17,13 @@ class Connection:
         self, hub_1: Cell, hub_2: Cell,
         color: Any, link_capacity: int = 1
     ) -> None:
-        self.hub_1 = hub_1
-        self.hub_2 = hub_2
         self.color = color
         if not self.color:
             self.color = END_ZONE_COLOR
-        self.start = self.get_pos(self.hub_1)
-        self.end = self.get_pos(self.hub_2)
+        self.start = self.get_pos(hub_1)
+        self.end = self.get_pos(hub_2)
         self.link_capacity = link_capacity
+        self.radius: int = int(hub_1.cell_size[0] // 4)
         self.player_traversing: list[Player] = []
 
     def draw_connection(self, screen: pygame.Surface) -> None:
@@ -33,7 +32,7 @@ class Connection:
             self.color,
             self.start,
             self.end,
-            width=10,
+            width=self.radius // 2,
         )
         self.draw_circle(screen, self.start, END_ZONE_COLOR)
         self.draw_circle(screen, self.end, END_ZONE_COLOR)
@@ -47,7 +46,7 @@ class Connection:
     def draw_circle(self, screen: pygame.Surface,
                     center: tuple[float, float],
                     color: Any) -> None:
-        pygame.draw.circle(screen, color, center, 15)
+        pygame.draw.circle(screen, color, center, self.radius)
 
     def is_free(self) -> bool:
         return len(self.player_traversing) < self.link_capacity

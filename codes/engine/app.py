@@ -2,12 +2,13 @@
 The engine that power the drones
 """
 
+import json
 from typing import Any
 
 import pygame
 from board.board import Board
-from board.connection import Connection
 from board.cell import Cell
+from board.connection import Connection
 from player.player import Player
 from settings import BACKGROUND_COLOR, FRAME_LIMIT, HEIGHT, TITLE, WIDTH
 from utils.map_utils import arrange_cells, get_dimention, get_end_point
@@ -18,6 +19,9 @@ class App:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(TITLE)
         self.config = config
+        with open("map.json", "w") as f:
+            data = json.dumps(self.config, indent=4)
+            f.write(data)
         dimention: tuple[int, int] = get_dimention(self.config['hub'])
         self.size: int = max(dimention)
         self.board = Board(self.config, self.size, self.size)
@@ -98,10 +102,15 @@ class App:
         connections: list[Connection] = []
         arranged: dict[str, Cell] = arrange_cells(self.board.cells)
         for conn in self.config['connection']:
-            connection = Connection(arranged[conn['a']],
+            try:
+                connection = Connection(arranged[conn['a']],
                                     arranged[conn['b']],
-                                    conn['metadata']['color'])
-            connections.append(connection)
+                                    conn['metadata']['color'],
+                                    conn['metadata']['max_link_capacity'])
+                connections.append(connection)
+            except Exception as e:
+                print(e)
+                continue
         return connections
 
     def draw_connection(self, screen: pygame.Surface,

@@ -16,12 +16,15 @@ def main() -> None:
     try:
         path = sys.argv[1].split("/")
         config = parsing(get_path(*path))
+        app = App(config)
+        app.run()
+        sys.exit(0)
     except ValueError as e:
         print(e)
         sys.exit(1)
-    app = App(config)
-    app.run()
-    sys.exit(0)
+    except KeyError as e:
+        print(e)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -51,5 +51,5 @@ def arrange_cells(cells: list[list[Cell]]) -> dict[str, Cell]:
     data: dict[str, Cell] = {}
     for row in cells:
         for cell in row:
-            data[cell.name] = cell
+            data[cell.name.strip()] = cell
     return data
