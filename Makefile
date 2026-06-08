@@ -1,33 +1,28 @@
-NAME=main.py
-VENV=.venv
-BIN_PATH=./$(VENV)/bin
-PIP=./$(BIN_PATH)/pip
-PYTHON=./$(BIN_PATH)/python
-FLAKE=./$(BIN_PATH)/flake8
-MYPY=./$(BIN_PATH)/mypy
-BASE_DIR=codes
+VENV := .venv
+BIN_DIR := $(VENV)/bin
+PYTHON := $(BIN_DIR)/python
+FLAKE := $(BIN_DIR)/flake8
+MYPY := $(BIN_DIR)/mypy
+UV := $(shell command -v uv)
+SRC := codes
 
-install: $(VENV)
-	$(PIP) install --upgrade pip
-	$(PIP) install -r requirements.txt
 
-list:
-	$(PIP) list
-
-$(VENV):
-	python3 -m venv $(VENV)
+install:
+	@if [ -z "$(UV)" ]; then \
+		@echo "intalling uv"; \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+		export PATH="$$HOME/.local/bin/:$$PATH"; \
+	fi
+	$(UV) sync
 
 run:
-	$(PYTHON) $(BASE_DIR)/$(NAME) 'maps/easy/01_linear_path.txt'
-
-debug:
-	$(PYTHON) -m pdb $(BASE_DIR)/$(NAME)
+	$(UV) run $(PYTHON) $(SRC)
 
 flake:
-	$(FLAKE) --exclude=$(VENV) .
+	$(FLAKE) $(SRC)
 
 lint: flake
-	$(MYPY) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
+	$(MYPY) $(SRC)
 
 clean:
 	find . -name "*.pyc" -exec rm -rf {} +
@@ -38,4 +33,4 @@ fclean: clean
 
 re: fclean install
 
-.PHONY: clean re fclean install run lint flake debug
+.PHONY = install run flake mypy re clean fclean

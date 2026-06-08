@@ -6,7 +6,7 @@ start_hub: start 0 0 [color=green max_drones=15]
 # Layer 1: Initial distribution nightmare
 hub: dist_gate1 1 0 [color=orange max_drones=1]
 hub: dist_gate2 1 1 [color=orange max_drones=1]
-hub: dist_gate3 1 1 [color=orange max_drones=1]
+hub: dist_gate3 1 -1 [color=orange max_drones=1]
 
 # Layer 2: Dead end maze with loops
 hub: maze_trap1 2 2 [color=red]
@@ -33,8 +33,8 @@ hub: priority_correct 6 0 [zone=priority color=cyan max_drones=3]
 # Layer 5: Multi-path convergence hell
 hub: conv_restricted1 7 0 [zone=restricted color=brown max_drones=2]
 hub: conv_restricted2 8 0 [zone=restricted color=brown max_drones=2]
-hub: conv_normal1 7 1 [color=blue max_drones=3]
-hub: conv_normal2 8 1 [color=blue max_drones=3]
+hub: conv_normal1 7 -1 [color=blue max_drones=3]
+hub: conv_normal2 8 -1 [color=blue max_drones=3]
 hub: conv_priority1 7 1 [zone=priority color=lime max_drones=2]
 hub: conv_priority2 8 1 [zone=priority color=lime max_drones=2]
 
