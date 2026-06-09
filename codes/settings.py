@@ -1,0 +1,6 @@
+WIDTH = 1240
+HEIGHT = 700
+TITLE = "Fly in"
+
+# COLORS
+BG_COLOR = (131, 93, 93)
