@@ -1,4 +1,5 @@
 import pygame
+from codes.models.hub import HubModel
 from parser.parsing import Parser
 from settings import BG_COLOR, HEIGHT, TITLE, WIDTH
 
@@ -13,6 +14,11 @@ class App:
         self.screen = pygame.display.set_mode(
                 (WIDTH, HEIGHT))
         pygame.display.set_caption(TITLE)
+
+    def _init(self, hubs: list[HubModel]) -> list[str]:
+        for hub in hubs:
+            ...
+        return []
 
     def run(self) -> None:
         """The function to run the program.

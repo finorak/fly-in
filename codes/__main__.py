@@ -1,6 +1,7 @@
 import sys
-from parser.parsing import Parser
+
 from parser.get_args import get_args
+from parser.parsing import Parser
 
 try:
     from src.app import App
@@ -13,7 +14,7 @@ def main() -> None:
     """Entry point of the program
     """
     args = get_args()
-    parser = Parser(args.input_file)
+    parser = Parser(args.input)
     app = App(parser)
     app.run()
 

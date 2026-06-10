@@ -11,6 +11,6 @@ def get_args() -> Namespace:
             description="A drone simulation app",
             usage="uv run python -m codes [file]")
     parser.add_argument(
-            "--input_file", type=str, help="Map file"
+            "--input", type=str, help="Map file"
             )
     return parser.parse_args()

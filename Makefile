@@ -17,7 +17,7 @@ install:
 
 run:
 	$(UV) run $(PYTHON) $(SRC) \
-		--input_file 'maps/easy/01_linear_path.txt'
+		--input 'maps/easy/01_linear_path.txt'
 
 flake:
 	$(FLAKE) $(SRC)

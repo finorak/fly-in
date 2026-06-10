@@ -7,5 +7,6 @@ dependencies = [
 	"pygame-ce>=2.5.7",
 	"flake8>=3.9.2",
 	"mypy>=2.1.0",
-	"pydantic>=2.13.2"
+	"pydantic>=2.13.2",
+	"webcolors>=25.10.0"
 ]
