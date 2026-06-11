@@ -13,4 +13,8 @@ def get_args() -> Namespace:
     parser.add_argument(
             "--input", type=str, help="Map file"
             )
+    parser.add_argument(
+            "--visual", type=bool, help="To show or not",
+            default=False
+            )
     return parser.parse_args()

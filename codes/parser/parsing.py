@@ -1,9 +1,8 @@
 import re
-import sys
 from typing import Any
 
-from models.connection import ConnectionModel
-from models.hub import HubModel
+from models.connection_model import ConnectionModel
+from models.hub_model import HubModel
 from parser.map_error import MapError
 
 
@@ -22,11 +21,10 @@ class Parser:
                 }
         self.hubs: dict[str, HubModel] = {}
         self.connections: dict[str, dict[str, ConnectionModel]] = {}
-        try:
-            self.extract_map(map_file)
-        except MapError as e:
-            print(e)
-            sys.exit(1)
+        # TODO: PROTECT THIS IN A BLOCK OF TRY EXCEPT
+        # BUT FOR DEVELOPMENT ONLY WE REMOVED IT
+        # TO SEE THE WHERE THE CRASH HAPPNED
+        self.extract_map(map_file)
         self.size = self.get_dimension()
 
     def extract_map(self, map_file: str) -> None:

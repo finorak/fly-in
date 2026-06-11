@@ -1,19 +1,21 @@
 import pygame
-from codes.models.hub import HubModel
+from models.hub_model import HubModel
 from parser.parsing import Parser
 from settings import BG_COLOR, HEIGHT, TITLE, WIDTH
+from src.cell import Cell
 
 
 class App:
     """The main app for our application
     """
-    def __init__(self, parser: Parser) -> None:
+    def __init__(self, parser: Parser, visual: bool = False) -> None:
         """Constructor for an app instance
         """
         self.parser = parser
         self.screen = pygame.display.set_mode(
                 (WIDTH, HEIGHT))
         pygame.display.set_caption(TITLE)
+        self.cells: list[Cell] = []
 
     def _init(self, hubs: list[HubModel]) -> list[str]:
         for hub in hubs:

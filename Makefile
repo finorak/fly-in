@@ -25,6 +25,9 @@ flake:
 lint: flake
 	$(MYPY) $(SRC)
 
+list:
+	$(UV) pip list
+
 clean:
 	find . -name "*.pyc" -exec rm -rf {} +
 	find . -type d \( -name "__pycache__" -o -name ".mypy_cache" \) -exec rm -rf {} +
@@ -34,4 +37,4 @@ fclean: clean
 
 re: fclean install
 
-.PHONY = install run flake mypy re clean fclean
+.PHONY = install run flake mypy re clean fclean list

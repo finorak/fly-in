@@ -1,4 +1,4 @@
-from models.hub import HubModel
+from models.hub_model import HubModel
 from pydantic import BaseModel, model_validator
 
 

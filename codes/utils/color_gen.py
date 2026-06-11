@@ -1,10 +1,13 @@
-from typing import Any
+from typing import Any, Optional
 
 import webcolors
 from parser.map_error import MapError
 
 
-def generate_color(color_name: str, index: int) -> Any:
+def generate_color(
+        color_name: str,
+        falback_color: str = "white",
+        index: Optional[int] = None) -> Any:
     """Generating the color requested by the metadata.
     Parameters:
         color_name: the name of the color.
@@ -20,4 +23,6 @@ def generate_color(color_name: str, index: int) -> Any:
         hex_color = webcolors.name_to_hex(color_name)
         return hex_color
     except ValueError:
+        if index is None:
+            return webcolors.name_to_hex(falback_color)
         raise MapError(f"Line {index}: Color invalid")

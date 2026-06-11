@@ -1,13 +1,17 @@
-from typing import Any
-
+from typing import Optional
 import pygame
 
 
 class Cell(pygame.sprite.Sprite):
-    def __init__(self, image: pygame.Surface, pos: tuple[int, int], *groups: Any) -> None:
+    def __init__(
+            self,
+            pos: tuple[int, int],
+            *groups: pygame.sprite.Group,
+            image: Optional[pygame.Surface] = None
+            ) -> None:
         super().__init__(*groups)
-        self.image = image
+        self.pos = pos
+        self.image = pygame.Surface(self.pos)
+        self.image.fill('white')
         self.rect = self.image.get_rect()
-
-    def update(self, *args: Any, **kwargs: Any) -> None:
-        return super().update(*args, **kwargs)
+        self.rect.center = pos
