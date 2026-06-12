@@ -3,6 +3,7 @@ BIN_DIR := $(VENV)/bin
 PYTHON := $(BIN_DIR)/python
 FLAKE := $(BIN_DIR)/flake8
 MYPY := $(BIN_DIR)/mypy
+PYLINT := $(BIN_DIR)/pylint
 UV := $(shell command -v uv)
 SRC := codes
 
@@ -24,6 +25,9 @@ flake:
 
 lint: flake
 	$(MYPY) $(SRC)
+
+pylint:
+	$(PYLINT) $(SRC)
 
 list:
 	$(UV) pip list

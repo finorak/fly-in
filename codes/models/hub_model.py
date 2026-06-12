@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel, model_validator
 
 
@@ -19,6 +21,28 @@ class HubModel(BaseModel):
         if self.name.__contains__('-') or self.name.__contains__(' '):
             raise ValueError("Hub name can't contain ' ' or '-'")
         return self
+
+    def keys(self) -> list[str]:
+        """To avoid generating a key for each
+        attributes in the process of creating
+        the class, we just give it the keys.
+        In other word, we unpack it.
+        Returns:
+            a list of keys we want to use
+        """
+        return ['x', 'y', 'name', 'zone', 'max_drones', 'color']
+
+    def __getitem__(self, key: str) -> Any:
+        """Returning the value associated with each key.
+        Parameters:
+            key: the key we want to use.
+        Returns:
+             A dictionary that contain the
+             key an the value of each key.
+        """
+        if key in self.keys():
+            return getattr(self, key)
+        raise KeyError(key)
 
     def __str__(self) -> str:
         """Visual representaion of this class
