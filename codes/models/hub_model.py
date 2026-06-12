@@ -2,6 +2,8 @@ from typing import Any
 
 from pydantic import BaseModel, model_validator
 
+from utils.map_error import MapError
+
 
 class HubModel(BaseModel):
     """Hub model
@@ -19,7 +21,7 @@ class HubModel(BaseModel):
         the hub model.
         """
         if self.name.__contains__('-') or self.name.__contains__(' '):
-            raise ValueError("Hub name can't contain ' ' or '-'")
+            raise MapError("Hub name can't contain ' ' or '-'")
         return self
 
     def keys(self) -> list[str]:

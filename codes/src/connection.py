@@ -26,5 +26,5 @@ class Connection(pygame.sprite.Sprite):
         self.max_link_capacity = max_link_capacity
 
     def __str__(self) -> str:
-        return f"Connecting {self.hub_a.data.name} and {self.hub_b.data.name}: \
+        return f"Connecting {self.hub_a.data.name} and {self.hub_b.data.name}:\
 capacity {self.max_link_capacity}"

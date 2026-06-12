@@ -3,6 +3,7 @@ from typing import Any
 from parser.parsing import Parser
 from src.cell import Cell
 from src.connection import Connection
+from utils.helper import load_image_from_dir, load_images
 
 
 class Data:
@@ -18,7 +19,7 @@ class Data:
         self.cells: list[Cell] = []
         self.connections: list[Connection] = []
         self.organized: dict[str, Cell] = {}
-        self.images: dict[str, Any] = {}
+        self.images: dict[str, Any] = self.load_all_images()
 
     def create_cells(self) -> None:
         """Creating all the cells, based on the
@@ -40,3 +41,16 @@ class Data:
                     max_link_capacity=conn.max_link_capacity
                     )
             self.connections.append(connection)
+
+    def load_all_images(self) -> dict[str, Any]:
+        """Loading all required images from the assets
+        folder
+        """
+        data: dict[str, Any] = {}
+        data['background'] = load_images(
+                'assets', 'img', 'background',
+                'background 1', '1.png')
+        data['idl'] = load_image_from_dir('idl')
+        data['walk'] = load_image_from_dir('walk')
+        data['landing'] = load_image_from_dir('landing')
+        return data

@@ -176,7 +176,7 @@ class Parser:
             if len(splited_value) == 2:
                 metadata = self.get_connection_metadata(
                         index, splited_value[1])
-            data: dict[str, HubModel] = {
+            data: dict[str, Any] = {
                     'hub_a': self.hubs[hub_a],
                     'hub_b': self.hubs[hub_b]
                     }

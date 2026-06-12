@@ -1,6 +1,6 @@
 import pygame
 from parser.parsing import Parser
-from settings import BG_COLOR, HEIGHT, TITLE, WIDTH
+from settings import HEIGHT, TITLE, WIDTH
 
 from src.cell import Cell
 from src.data.app_data import Data
@@ -14,6 +14,7 @@ class App:
         Parameters:
             parser: class containing the parsed data.
         """
+        pygame.init()
         self.data = Data(parser)
         self.screen = pygame.display.set_mode(
                 (WIDTH, HEIGHT))
@@ -28,6 +29,9 @@ class App:
         """
         self.data.create_cells()
         self.data.create_connections()
+        self.data.images['background'] = pygame.transform.scale(
+                self.data.images['background'], (WIDTH, HEIGHT)
+                ).convert_alpha()
         for cell in self.data.cells:
             print(cell)
         print("#" * 50)
@@ -57,4 +61,4 @@ class App:
             that it doesn't glich even on
             older pc.
         """
-        self.screen.fill(BG_COLOR)
+        self.screen.blit(self.data.images['background'])

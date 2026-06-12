@@ -6,8 +6,7 @@ from models.hub_model import HubModel
 
 
 class ConnectionModel(BaseModel):
-    """Connection model
-    """
+    """Connection model """
     hub_a: HubModel
     hub_b: HubModel
     max_link_capacity: int = Field(default=1)

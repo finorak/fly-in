@@ -1,9 +1,10 @@
-from os import path
+from os import listdir, path
 from typing import Any, Optional
 
 import pygame
 import webcolors
 from models.hub_model import HubModel
+
 from utils.map_error import MapError
 
 
@@ -16,14 +17,31 @@ def get_path(*args: str) -> Any:
     return path.abspath(path.join(*args))
 
 
-def load_images(*path: str) -> Any:
+def load_images(*args: str) -> pygame.Surface:
     """Getting the loaded images.
     Parameters:
-        path: a list of string to represent the path
+        args: a list of string to represent the path
     Returns:
         the loaded image
     """
-    return pygame.image.load(get_path(*path))
+    return pygame.image.load(get_path(*args))
+
+
+def load_image_from_dir(state: str) -> list[Any]:
+    """We already know where the images
+    files are stored, so we use this function
+    to avoid repeating this.
+    Parameters:
+        state: one of 'landing', 'idl', 'wlak'
+    Returns:
+        a list of available spries
+    """
+    return [
+            load_images(
+                'assets', 'img', state, file
+                ) for file in listdir(
+                    get_path('assets', 'img', state))
+            ]
 
 
 def generate_color(
@@ -33,6 +51,8 @@ def generate_color(
     """Generating the color requested by the metadata.
     Parameters:
         color_name: the name of the color.
+        falback_color: in case where the color is not
+        valid, we switch back to this.
         index: the line where to use if there was
         an error in the metadata.
     Returns:
