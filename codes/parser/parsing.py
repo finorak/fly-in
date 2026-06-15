@@ -4,8 +4,8 @@ from typing import Any
 from models.connection_model import ConnectionModel
 from models.hub_model import HubModel
 from settings import PATTERN, ZONES
-from utils.map_error import MapError
-from utils.helper import get_dimension
+from utils.errors import MapError
+from utils.helper import get_dimension, is_numeric
 
 
 class Parser:
@@ -25,14 +25,14 @@ class Parser:
         self.connections: dict[str, dict[str, ConnectionModel]] = {}
         self.conns: list[ConnectionModel] = []
         self.extract_map(map_file)
-        self.size = get_dimension(self.hubs)
+        self.size: tuple[int, int, int, int] = get_dimension(self.hubs)
 
     def extract_map(self, map_file: str) -> None:
         """Extracting input file
         Parameters:
             map_file: the location of the map
         """
-        with open(map_file, 'r', encoding='utf-8') as file:
+        with open(map_file, mode='r', encoding='utf-8') as file:
             lines = file.readlines()
         starter: list[bool] = [True, True, True]
         for index, line in enumerate(lines, start=1):
@@ -94,8 +94,10 @@ class Parser:
         try:
             metadata: dict[Any, Any] = {}
             name: str = splited_data[0].strip()
-            x: int = int(splited_data[1].strip())
-            y: int = int(splited_data[2].strip())
+            x: str = splited_data[1].strip()
+            y: str = splited_data[2].strip()
+            if not is_numeric(x) or not is_numeric(y):
+                raise MapError(f"Line {index}: position must be valid integer")
             if name in self.hubs:
                 raise MapError(f"Line {index}: Duplicate hub.")
             if name in self.hubs:
@@ -110,6 +112,10 @@ class Parser:
             hub: HubModel = HubModel(**data, **metadata)
             self.data['hub'].append(hub)
             self.hubs[name] = hub
+            if key == "start_hub":
+                self.start = name
+            elif key == "end_hub":
+                self.end = name
         except Exception as e:
             raise MapError(f"Line {index}: {e}")
 

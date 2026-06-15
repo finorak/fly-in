@@ -5,7 +5,7 @@ import pygame
 import webcolors
 from models.hub_model import HubModel
 
-from utils.map_error import MapError
+from utils.errors import MapError
 
 
 def get_path(*args: str) -> Any:
@@ -44,20 +44,17 @@ def load_image_from_dir(state: str) -> list[Any]:
             ]
 
 
-def generate_color(
-        color_name: str,
-        falback_color: str = "white",
-        index: Optional[int] = None) -> Any:
+def generate_color(color_name: str,
+                   index: Optional[int] = None,
+                   falback_color: str = "white") -> Any:
     """Generating the color requested by the metadata.
     Parameters:
-        color_name: the name of the color.
-        falback_color: in case where the color is not
-        valid, we switch back to this.
-        index: the line where to use if there was
-        an error in the metadata.
+        color_name: color we want to extract
+        index: index at which we got the metadata
+        falback_color: what color to use in case the color_name
+                        isn't correct
     Returns:
-        the hex representation of that specific
-        color_name
+        hex representation of the color we extracted
     """
     if not color_name.isalpha():
         raise MapError(f"Line {index}: color name isn't a string")
@@ -70,22 +67,61 @@ def generate_color(
         raise MapError(f"Line {index}: Color invalid")
 
 
-def get_dimension(hubs: dict[str, HubModel]) -> int:
+def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
     """Getting the dimension, Just iterating
     over the hubs and get the maximum between
     the x and y for all the hubs
     Parameters:
         hubs: a dict containing all the hub
-        represented by teir name.
+            represented by teir name.
     Returns:
-        the dimension we got.
+        tuple: that contain the dimension,
+                the min of x and y.
     """
-    sizes: set = set()
+    x_sizes: set[int] = set()
+    y_sizes: set[int] = set()
     for hub_name in hubs:
-        sizes.add(hubs[hub_name].x)
-        sizes.add(hubs[hub_name].y)
-    x: int = max(list(sizes))
-    y: int = -min(list(sizes))
-    if x > y:
-        return x + 1
-    return y + 1
+        x_sizes.add(hubs[hub_name].x)
+        y_sizes.add(hubs[hub_name].y)
+    x_min: int = min(list(x_sizes))
+    x_max: int = max(list(x_sizes))
+    y_min: int = min(list(y_sizes))
+    y_max: int = max(list(y_sizes))
+    x: int = x_max if x_max > -x_min else -x_min
+    y: int = y_max if y_max > -y_min else -y_min
+    if x_min == -x:
+        x = x ** 2
+    if y_min == -y:
+        y = y ** 2
+    return x + 1, y + 1, x_min, y_min
+
+
+def get_correct_coordinate(
+        size: tuple[int, int],
+        x: int, y: int) -> tuple[int, int]:
+    """Getting the correct coordonate based
+    on the size
+    Parameters:
+        size: the size we use as bases
+        x: the x coordonate of the point
+        y: the y coordonate of thhe point
+    Returns:
+        a tuple that represent the correct coordonate.
+    ```
+    >>> pos = get_correct_coordinate((4, 1), -3, 0)
+    >>> (1, 0)
+    ```
+    """
+    if x < 0:
+        x = size[0] + x
+    if y < 0:
+        y = size[1] + y
+    return x, y
+
+
+def is_numeric(value: str) -> bool:
+    try:
+        int(value)
+        return True
+    except ValueError:
+        return False

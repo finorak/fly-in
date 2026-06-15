@@ -2,7 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, model_validator
 
-from utils.map_error import MapError
+from utils.errors import MapError
 
 
 class HubModel(BaseModel):

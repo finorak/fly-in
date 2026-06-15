@@ -1,7 +1,7 @@
 import pygame
 from parser.parsing import Parser
 from settings import HEIGHT, TITLE, WIDTH
-
+from src.groups.groups import SpriteGroup, SimulationGroup
 from src.cell import Cell
 from src.data.app_data import Data
 
@@ -9,17 +9,21 @@ from src.data.app_data import Data
 class App:
     """The main app for our application
     """
-    def __init__(self, parser: Parser, visual: bool = False) -> None:
+    def __init__(self, parser: Parser, visual: bool = True) -> None:
         """Constructor for an app instance
         Parameters:
             parser: class containing the parsed data.
+            visual: whever to show the visualisation
+                    or not, by default we see
         """
         pygame.init()
-        self.data = Data(parser)
+        self.sprite_group: SpriteGroup = SpriteGroup()
+        self.simulation_group: SimulationGroup = SimulationGroup()
+        self.data = Data(parser, [self.sprite_group, self.simulation_group])
         self.screen = pygame.display.set_mode(
                 (WIDTH, HEIGHT))
         pygame.display.set_caption(TITLE)
-        self.cells: list[Cell] = []
+        self.cells: list[list[Cell]] = []
 
     def _init(self) -> None:
         """We avoid lunching any function from
@@ -28,15 +32,11 @@ class App:
         by calling it from the one that need this class
         """
         self.data.create_cells()
-        self.data.create_connections()
+        self.data.create_connections(self.sprite_group)
         self.data.images['background'] = pygame.transform.scale(
                 self.data.images['background'], (WIDTH, HEIGHT)
-                ).convert_alpha()
-        for cell in self.data.cells:
-            print(cell)
-        print("#" * 50)
-        for conn in self.data.connections:
-            print(conn)
+                )
+        self.data.create_drones()
 
     def run(self) -> None:
         """The function to run the program.
@@ -45,20 +45,26 @@ class App:
         clock = pygame.time.Clock()
         while running:
             dt = clock.tick() / 1000
-            self.draw(dt)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                     break
-            pygame.display.update()
+            self.update(dt)
+            self.draw(self.screen, dt)
         pygame.quit()
 
-    def draw(self, dt: float) -> None:
+    def update(self, dt: float) -> None:
+        pygame.display.update()
+        self.sprite_group.update(dt)
+
+    def draw(self, screen: pygame.Surface, dt: float) -> None:
         """Drawing the sprites, images, etc
         into the window.
         Parameters:
+            screen: where to render
             dt: delta time of each frames, so
-            that it doesn't glich even on
-            older pc.
+                that it doesn't glich even on
+                older pc.
         """
         self.screen.blit(self.data.images['background'])
+        self.sprite_group.custom_draw(screen, dt)
