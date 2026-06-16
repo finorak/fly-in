@@ -9,7 +9,7 @@ from src.groups.groups import SpriteGroup, SimulationGroup
 from utils.helper import load_image_from_dir, load_images
 
 
-class Data:
+class AppData:
     """Class containing all our data, In other
     word a builder class.
     """
@@ -22,11 +22,11 @@ class Data:
                     the associated sprites
         """
         self.parser = parser
+        self.groups = groups
         self.cells: dict[tuple[int, int], Cell] = {}
         self.drones: list[Drone] = []
         self.connections: list[Connection] = []
         self.named_cell: dict[str, Cell] = {}
-        self.groups = groups
         self.images: dict[str, Any] = self.load_all_images()
 
     def create_cells(self) -> None:
@@ -46,6 +46,7 @@ class Data:
             x, y = cell.data.pos
             self.named_cell[cell.data.name] = cell
             self.cells[(x, y)] = cell
+            self.first_cell = cell
         print(self.cells)
 
     def create_connections(self, sprite_group: SpriteGroup) -> None:

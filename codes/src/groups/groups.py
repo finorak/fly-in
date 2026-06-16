@@ -49,7 +49,7 @@ class SpriteGroup(pygame.sprite.Group):
                 sprite for sprite in self.sprites()
                 if not hasattr(sprite, 'network')]
         for sprites in [conn_sprites, all_sprites]:
-            for sprite in sprites:
+            for sprite in sorted(sprites, key=lambda sprite: sprite.rect.centery):
                 offset = sprite.rect.center + self.offset
                 if sprite not in all_sprites:
                     offset = sprite.rect.topleft + self.offset

@@ -5,8 +5,7 @@
 from utils.helper import generate_color
 
 # SCREEN SETTINGS
-WIDTH = 720
-HEIGHT = 360
+WIN_SIZE = (720, 360)
 TITLE = "Fly in"
 
 # CELL SETTINGS

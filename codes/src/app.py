@@ -1,9 +1,8 @@
 import pygame
 from parser.parsing import Parser
-from settings import HEIGHT, TITLE, WIDTH
+from settings import TITLE, WIN_SIZE
 from src.groups.groups import CameraGroup, SpriteGroup, SimulationGroup
-from src.cell import Cell
-from src.data.app_data import Data
+from src.data.app_data import AppData
 
 
 class App:
@@ -20,11 +19,9 @@ class App:
         self.sprite_group: SpriteGroup = SpriteGroup()
         self.simulation_group: SimulationGroup = SimulationGroup()
         self.camera_group: CameraGroup = CameraGroup()
-        self.data = Data(parser, [self.sprite_group, self.simulation_group])
-        self.screen = pygame.display.set_mode(
-                (WIDTH, HEIGHT))
+        self.data = AppData(parser, [self.sprite_group, self.simulation_group])
+        self.screen = pygame.display.set_mode(WIN_SIZE, pygame.SCALED)
         pygame.display.set_caption(TITLE)
-        self.cells: list[list[Cell]] = []
 
     def _init(self) -> None:
         """We avoid lunching any function from
@@ -33,8 +30,7 @@ class App:
         by calling it from the one that need this class
         """
         self.data.images['background'] = pygame.transform.scale(
-                self.data.images['background'], (WIDTH, HEIGHT)
-                )
+                self.data.images['background'], WIN_SIZE)
         self.data.create_cells()
         self.data.create_connections(self.sprite_group)
         self.data.create_drones()
@@ -51,6 +47,9 @@ class App:
                 if event.type == pygame.QUIT:
                     running = False
                     break
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_f:
+                        pygame.display.toggle_fullscreen()
             self.update(dt)
             self.draw(self.screen, dt)
         pygame.quit()
@@ -62,7 +61,6 @@ class App:
         Parameters:
             dt: delta time used for animation
         """
-        print("here")
         ...
 
     def update(self, dt: float) -> None:
