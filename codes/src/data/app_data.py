@@ -1,5 +1,6 @@
 from typing import Any
 
+from models.hub_model import HubModel
 from parser.parsing import Parser
 from src.cell import Cell
 from src.drone import Drone
@@ -21,7 +22,7 @@ class Data:
                     the associated sprites
         """
         self.parser = parser
-        self.cells: list[list[Cell | int]] = []
+        self.cells: dict[tuple[int, int], Cell] = {}
         self.drones: list[Drone] = []
         self.connections: list[Connection] = []
         self.named_cell: dict[str, Cell] = {}
@@ -34,35 +35,33 @@ class Data:
         """
         # just filling the cells so that we can
         # use it to our need
-        for i in range(self.parser.size[0]):
-            self.cells.append([])
-            for _ in range(self.parser.size[1]):
-                self.cells[i].append(0)
         # placing the cell to the correct
         # coordonate
         for hub_name in self.parser.hubs:
-            data = self.parser.hubs[hub_name]
+            data: HubModel = self.parser.hubs[hub_name]
             data.x += self.parser.size[2]
             data.y += self.parser.size[3]
-            cell: Cell = Cell(**data, size=self.parser.size,
+            cell: Cell = Cell(**data, dimension=self.parser.size,
                               groups=self.groups)
             x, y = cell.data.pos
-            for group in self.groups:
-                group.add(cell)
             self.named_cell[cell.data.name] = cell
-            self.cells[x][y] = cell
+            self.cells[(x, y)] = cell
+        print(self.cells)
 
     def create_connections(self, sprite_group: SpriteGroup) -> None:
         """Creating the connection between the hubs
         """
         for conn in self.parser.conns:
-            connection: Connection = Connection(
-                self.named_cell[conn.hub_a.name],
-                self.named_cell[conn.hub_b.name],
+            cell_a = self.named_cell[conn.hub_a.name]
+            cell_b = self.named_cell[conn.hub_b.name]
+            connection_a: Connection = Connection(
+                cell_a, cell_b,
                 group=sprite_group,
                 max_link_capacity=conn.max_link_capacity
                 )
-            self.connections.append(connection)
+            self.connections.append(connection_a)
+        for pos in self.cells:
+            self.cells[pos].find_neighboor(self.connections)
 
     def create_drones(self) -> None:
         """Creating all the drones and initializing them

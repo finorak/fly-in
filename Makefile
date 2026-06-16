@@ -4,7 +4,7 @@ PYTHON := $(BIN_DIR)/python
 FLAKE := $(BIN_DIR)/flake8
 MYPY := $(BIN_DIR)/mypy
 PYLINT := $(BIN_DIR)/pylint
-UV := $(shell command -v uv)
+UV := uv
 SRC := codes
 
 
@@ -18,7 +18,7 @@ install:
 
 run:
 	$(UV) run $(PYTHON) $(SRC) \
-		--input 'maps/easy/01_linear_path.txt'
+		--input 'maps/challenger/01_the_impossible_dream.txt'
 
 flake:
 	$(FLAKE) $(SRC)

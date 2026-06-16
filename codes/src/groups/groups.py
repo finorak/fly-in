@@ -12,7 +12,7 @@ class SpriteGroup(pygame.sprite.Group):
         instance
         """
         super().__init__()
-        self.speed = 5
+        self.speed = 500
         self.offset = pygame.math.Vector2()
 
     def update_offset(self, dt: float) -> None:
@@ -26,8 +26,12 @@ class SpriteGroup(pygame.sprite.Group):
             dt: delta time
         """
         keys = pygame.key.get_pressed()
-        self.offset.x -= int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
-        self.offset.y -= int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])
+        self.offset.x -= int(
+                keys[pygame.K_RIGHT]) - int(
+                        keys[pygame.K_LEFT]) * self.speed * dt
+        self.offset.y -= int(
+                keys[pygame.K_DOWN]) - int(
+                        keys[pygame.K_UP]) * self.speed * dt
 
     def custom_draw(self, screen: pygame.Surface, dt: float) -> None:
         """A custom draw function that let us
@@ -38,9 +42,18 @@ class SpriteGroup(pygame.sprite.Group):
             dt: delta time
         """
         self.update_offset(dt)
-        for sprite in self.sprites():
-            offset = sprite.rect.center + self.offset
-            screen.blit(sprite.image, offset)
+        conn_sprites = [
+                sprite for sprite in self.sprites()
+                if hasattr(sprite, 'network')]
+        all_sprites = [
+                sprite for sprite in self.sprites()
+                if not hasattr(sprite, 'network')]
+        for sprites in [conn_sprites, all_sprites]:
+            for sprite in sprites:
+                offset = sprite.rect.center + self.offset
+                if sprite not in all_sprites:
+                    offset = sprite.rect.topleft + self.offset
+                screen.blit(sprite.image, offset)
 
 
 class SimulationGroup(pygame.sprite.Group):
@@ -62,6 +75,6 @@ class SimulationGroup(pygame.sprite.Group):
         """
 
 
-class ZoomCamera(pygame.sprite.Group):
+class CameraGroup(pygame.sprite.Group):
     def __init__(self) -> None:
         super().__init__()

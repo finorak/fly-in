@@ -5,8 +5,8 @@
 from utils.helper import generate_color
 
 # SCREEN SETTINGS
-WIDTH = 1280
-HEIGHT = 600
+WIDTH = 720
+HEIGHT = 360
 TITLE = "Fly in"
 
 # CELL SETTINGS
@@ -29,15 +29,19 @@ LINE_COLOR = generate_color("black")
 # ZONES WITH THEM DEFAULT VALUES
 ZONES = {
         'normal': {
-            'color': ''
-            },
-        'blocked': {
-            'color': ''
+            'color': '',
+            'cost': 1,
             },
         'restricted': {
-            'color': ''
+            'color': '',
+            'cost': 2,
             },
         'priority': {
-            'color': ''
+            'color': 'green',
+            'cost': 1,
+            },
+        'blocked': {
+            'color': 'red',
+            'cost': -1,
             }
         }

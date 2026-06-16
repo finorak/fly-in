@@ -1,6 +1,6 @@
 import pygame
 from settings import CELL_HEIGHT, CELL_HEIGHT_GAP, CELL_WIDTH, CELL_WIDTH_GAP
-
+from src.connection import Connection
 from src.data.cell_data import CellData
 from src.groups.groups import SimulationGroup, SpriteGroup
 
@@ -13,7 +13,7 @@ class Cell(pygame.sprite.Sprite):
     """
     def __init__(
             self, x: int, y: int, name: str,
-            size: tuple[int, int, int, int],
+            dimension: tuple[int, int, int, int],
             groups: list[SimulationGroup | SpriteGroup], max_drones: int = 1,
             color: str = 'white', zone: str = 'normal'
             ) -> None:
@@ -21,23 +21,23 @@ class Cell(pygame.sprite.Sprite):
         Parameters:
             x: x coordinate of the cell
             y: y coordinate of the cell
-            name: the name of the cell
-            size: the size of the
-            zone: zone of the cell one of 'normal', 'restricted'
-                    'blocked', 'priority'
-            groups: for the sprites to be used
-                    correctly we store them in a groups
-            color: the color of the cell, by default
-                    we use white
-            image: the image to be shown to represent
-                    our cell.
+            name: the name of the cell \
+dimension: the dimension
+            zone: zone of the cell one of 'normal', 'restricted' \
+'blocked', 'priority'
+            groups: for the sprites to be used \
+correctly we store them in a groups
+            color: the color of the cell, by default \
+we use white
+            image: the image to be shown to represent \
+our cell.
             max_drones: how many drone a cell can have.
         """
         super().__init__(*groups)
-        self.size: tuple[int, int, int, int] = size
+        self.dimension: tuple[int, int, int, int] = dimension
         self.data = CellData(
                 max_drones, zone,
-                name, (x - size[2], y - size[3]))
+                name, (x - dimension[2], y - dimension[3]))
         self.image: pygame.Surface = pygame.Surface(
             (CELL_WIDTH, CELL_HEIGHT)
             )
@@ -47,6 +47,7 @@ class Cell(pygame.sprite.Sprite):
             topleft=(x * (CELL_WIDTH + CELL_WIDTH_GAP),
                      y * (CELL_HEIGHT + CELL_HEIGHT_GAP))
             )
+        self.neighboors: set[Cell] = set()
 
     def set_position(self, x: int, y: int) -> tuple[int, int]:
         # TODO: Might remove this function if find best
@@ -60,10 +61,22 @@ class Cell(pygame.sprite.Sprite):
             the normalized postion
         """
         if x < 0:
-            x = self.size[0] - x
+            x = self.dimension[0] - x
         if y < 0:
-            y = self.size[1] - y
+            y = self.dimension[1] - y
         return x, y
+
+    def find_neighboor(self, connections: list[Connection]) -> None:
+        """Finding the neighboor of this cell,
+        Parameters:
+            connections: list of connections.
+        """
+        # a -> (), b -> ()
+        for conn in connections:
+            if conn.cell_a == self:
+                self.neighboors.add(conn.cell_b)
+            elif conn.cell_b == self:
+                self.neighboors.add(conn.cell_a)
 
     def __str__(self) -> str:
         """How do we want to print this class

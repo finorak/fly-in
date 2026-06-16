@@ -1,15 +1,21 @@
+from typing import Any
 import pygame
 
+from src.data.drone_data import DroneData
 from src.cell import Cell
 
 
 class Drone(pygame.sprite.Sprite):
-    """Class for representing the drones
-    """
+    """Class for representing the drones"""
+
     def __init__(
-            self, id: int, start_zone: Cell, end_zone: Cell,
-            frames: dict[str, list[pygame.Surface]],
-            *groups: pygame.sprite.Group) -> None:
+        self,
+        drone_id: int,
+        start_zone: Cell,
+        end_zone: Cell,
+        frames: dict[str, list[pygame.Surface]],
+        *groups: pygame.sprite.Group,
+    ) -> None:
         """Constructor for our drones.
         Parameters:
             start_zone: The start of the done
@@ -20,20 +26,17 @@ class Drone(pygame.sprite.Sprite):
             groups: to control the sprites
         """
         super().__init__(*groups)
-        self.id = f"D{id}"
-        self.state = "idl"
-        self.frames = frames
-        self.image = frames[self.state][0].convert_alpha()
-        self.rect = self.image.get_rect(
-                bottom=self.set_rect(start_zone, self.image)
-                )
-        self.start_zone = start_zone
-        self.end_zone = end_zone
-        self.index: float = 0
-        self.speed: float = 5
-        self.frame_speed = 5
+        self.frames: dict[str, list[pygame.Surface]] = frames
+        self.data: DroneData = DroneData(
+                drone_id, start_zone, end_zone, frames)
+        self.image: pygame.Surface = frames[self.data.state][0].convert_alpha()
+        self.rect: pygame.Rect = self.image.get_rect(
+            bottom=self.set_rect(start_zone, self.image)
+        )
+        self.current_zone: Cell = start_zone
+        self.move: bool = False
 
-    def set_rect(self, zone: Cell, image: pygame.Surface) -> int:
+    def set_rect(self, zone: Cell, image: pygame.Surface) -> Any:
         """To avoi warning from mypy we split
         it into this function
         Parameters:
@@ -54,9 +57,20 @@ class Drone(pygame.sprite.Sprite):
                 frames accross diferent device
                 even on older oone
         """
-        frame_len = len(self.frames[self.state])
-        if self.state == "landing" and int(self.index) == frame_len:
-            self.image = self.frames[self.state][frame_len - 1]
+        if self.move:
+            self.data.state = "walk"
+        if self.current_zone == self.data.end_zone:
+            self.data.state = "landing"
+            self.move = False
+        frame_len = len(self.frames[self.data.state])
+        if self.data.state == "landing" and int(
+                self.data.frame_index) == frame_len:
+            self.image = self.frames[self.data.state][frame_len - 1]
         else:
-            self.index += self.frame_speed * dt
-            self.image = self.frames[self.state][int(self.index) % frame_len]
+            self.data.frame_index += self.data.frame_speed * dt
+            self.image = self.frames[self.data.state][
+                int(self.data.frame_index) % frame_len
+            ]
+
+    def __str__(self) -> str:
+        return f"{self.data.drone_id}"

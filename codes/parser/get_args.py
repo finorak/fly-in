@@ -9,7 +9,7 @@ def get_args() -> Namespace:
     """
     parser: ArgumentParser = ArgumentParser(
             description="A drone simulation app",
-            usage="uv run python -m codes [file]")
+            usage="uv run python -m codes --input [file]")
     parser.add_argument(
             "--input", type=str, help="Map file",
             default="maps/easy/01_linear_path.txt"
