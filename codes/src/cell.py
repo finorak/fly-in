@@ -8,8 +8,6 @@ from src.groups.groups import SimulationGroup, SpriteGroup
 class Cell(pygame.sprite.Sprite):
     """Cell class, we use to represent a
     cell.
-    TODO: NORMALIZING THE COORDONATE SO THAT
-    IT CAN BE PLACED INSIDE A 2D ARRAY
     """
     def __init__(
             self, x: int, y: int, name: str,
@@ -66,23 +64,21 @@ our cell.
             y = self.dimension[1] - y
         return x, y
 
-    def find_neighboor(self, connections: list[Connection]) -> None:
+    def find_neighboor(self, connections: list[Connection]) -> set['Cell']:
         """Finding the neighboor of this cell,
         Parameters:
             connections: list of connections.
         """
-        # a -> (), b -> ()
         for conn in connections:
-            if conn.cell_a == self:
+            if conn.cell_a == self and conn.cell_b.data.zone != "blocked":
                 self.neighboors.add(conn.cell_b)
-            elif conn.cell_b == self:
-                self.neighboors.add(conn.cell_a)
+        return self.neighboors
 
     def __str__(self) -> str:
         """How do we want to print this class
         Returns:
             the format we want to represent this class
         """
-        return f"{self.data.name} => pos: ({self.data.pos}), \
+        return f"{self.data.name} pos: ({self.data.pos}), \
 max_drones: {self.data.max_drones}, \
 zone: {self.data.zone}, color: {self.color}"

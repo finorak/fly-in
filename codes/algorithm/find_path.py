@@ -1,13 +1,31 @@
+from queue import PriorityQueue
+from typing import Any
+
+import pygame
+
 from src.cell import Cell
 from src.connection import Connection
 from src.drone import Drone
+
+
+def h(current_zone: Cell, end_zone: Cell) -> Any:
+    """Getting the herestic of the function.
+    We do so by calculating the cost of each
+    turn
+    Parameters:
+        current_zone: the current zone to calculate
+        end_zone: the end zone for our simulation
+    Returns:
+        the herestic value
+    """
+    return end_zone.data.turn_cost - current_zone.data.turn_cost
 
 
 def algorithme(
         drone: Drone,
         cells: dict[tuple[int, int], Cell],
         conections: list[Connection]
-        ) -> tuple[int, int]:
+        ) -> bool:
     """Finding the best next cell to go to
     Parameters:
         drone: the drone that need the best cell \
@@ -16,8 +34,38 @@ based on it's current cell
         conections: the connections that the current cell \
 has if it's utils to us
     Returns:
-        a tuple, the position of the next best cell
-        it can be the same as the drone's current
-        pos
+        boolean value that determin if we found \
+the path or not
     """
-    return 0, 0
+    count = 0
+    open_set: PriorityQueue = PriorityQueue()
+    start_zone = drone.current_zone
+    open_set.put((0, count, start_zone))
+    end_zone = drone.data.end_zone
+    came_from: dict[Cell, Cell] = {}
+    g_score = {cells[pos]: float("inf") for pos in cells}
+    g_score[drone.current_zone] = 0
+    f_score = {cells[pos]: float("inf") for pos in cells}
+    f_score[start_zone] = h(start_zone, end_zone)
+    open_set_hash: set = {start_zone}
+    while open_set:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_f:
+                    pygame.display.toggle_fullscreen()
+        current_zone: Cell = open_set.get()[2]
+        open_set_hash.remove(current_zone)
+        if current_zone == end_zone:
+            return True
+        for neighboor in current_zone.find_neighboor(conections):
+            temp_g_score = g_score[current_zone] + 1
+            if temp_g_score < g_score[neighboor]:
+                came_from[neighboor] = current_zone
+                g_score[neighboor] = temp_g_score
+                f_score[neighboor] = temp_g_score + h(neighboor, end_zone)
+                if neighboor not in open_set_hash:
+                    count += 1
+                    open_set.put((f_score[neighboor], count, neighboor))
+                    open_set_hash.add(neighboor)

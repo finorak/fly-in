@@ -17,5 +17,8 @@
 ## RESOURCES
 
 -[pygame](https://www.pygame.org/docs/)
+-[TechWithTim](https://www.youtube.com/watch?v=JtiK0DOeI4A&t=4474s)
+-[Clear Code](https://www.youtube.com/@ClearCode)
+-[A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
 
 ### AI USAGE

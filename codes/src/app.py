@@ -4,6 +4,8 @@ from parser.parsing import Parser
 from settings import TITLE, WIN_SIZE
 from src.data.app_data import AppData
 from src.groups.groups import CameraGroup, SimulationGroup, SpriteGroup
+from utils.errors import MapError
+from utils.helper import start_lead_to_goal
 
 
 class App:
@@ -35,6 +37,10 @@ class App:
         self.data.create_cells()
         self.data.create_connections(self.sprite_group)
         self.data.create_drones()
+        if not start_lead_to_goal(
+                self.data.start_zone[0],
+                self.data.end_zone):
+            raise MapError("Map error, Can't solve it")
 
     def run(self) -> None:
         """The function to run the program.

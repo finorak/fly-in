@@ -29,6 +29,9 @@ lint: flake
 pylint:
 	$(PYLINT) $(SRC)
 
+debug:
+	uv run python -m pdb codes/__main__.py
+
 list:
 	$(UV) pip list
 
@@ -41,4 +44,4 @@ fclean: clean
 
 re: fclean install
 
-.PHONY = install run flake mypy re clean fclean list
+.PHONY = install run flake mypy re clean fclean list debug

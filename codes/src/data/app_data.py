@@ -66,6 +66,8 @@ class AppData:
     def create_drones(self) -> None:
         """Creating all the drones and initializing them
         """
+        self.start_zone = self.named_cell[self.parser.start],
+        self.end_zone = self.named_cell[self.parser.end]
         for i in range(1, self.parser.data['nb_drones'] + 1):
             drone: Drone = Drone(
                 i, self.named_cell[self.parser.start],

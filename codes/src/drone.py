@@ -34,7 +34,9 @@ class Drone(pygame.sprite.Sprite):
             bottom=self.set_rect(start_zone, self.image)
         )
         self.current_zone: Cell = start_zone
+        self.paths: list[Cell] = []
         self.move: bool = False
+        self.wait: bool = False
 
     def set_rect(self, zone: Cell, image: pygame.Surface) -> Any:
         """To avoi warning from mypy we split

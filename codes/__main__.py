@@ -1,3 +1,4 @@
+import pygame
 from parser.get_args import get_args
 from parser.parsing import Parser
 from src.app import App
@@ -14,4 +15,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except pygame.error:
+        pass

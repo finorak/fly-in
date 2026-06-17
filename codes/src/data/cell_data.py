@@ -25,3 +25,5 @@ class CellData:
         self.name: str = name
         self._drones: dict[str, list[Any]] = {}
         self.pos: tuple[int, int] = pos
+        self.parent: list[list[tuple[int, int]]] = [
+                [] for _ in range(max_drones)]

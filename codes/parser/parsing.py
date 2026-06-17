@@ -28,7 +28,9 @@ class Parser:
                 }
         self.hubs: dict[str, HubModel] = {}
         self.connections: dict[str, dict[str, ConnectionModel]] = {}
+        self.key_found: set[str] = set()
         self.conns: list[ConnectionModel] = []
+        # EXTRACTING THE MAP FILES
         self.extract_map(map_file)
         self.size: tuple[int, int, int, int] = get_dimension(self.hubs)
 
@@ -85,6 +87,7 @@ class Parser:
                 self.extract_hub(index, key, data)
             elif key == 'connection':
                 self.extract_connecion(index, key, data)
+            self.key_found.add(key)
 
     def extract_hub(self, index: int, key: str, value: str) -> None:
         """Ectracting the hub from the key, value we got
@@ -172,6 +175,9 @@ class Parser:
         Returns:
             None
         """
+        if 'start_hub' not in self.key_found or \
+                'end_hub' not in self.key_found:
+            raise MapError(f"Line {index}: 'start_hub' or 'end_hub' not found")
         splited_value: list[str] = value.split(maxsplit=2)
         if len(splited_value) not in (1, 2):
             raise MapError(f"Line {index}: Too many value to unpack")

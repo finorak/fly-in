@@ -28,7 +28,6 @@ class Connection(pygame.sprite.Sprite):
         self.max_link_capacity = max_link_capacity
         self.network = True
         self.group = group
-        self._update_line()
 
     def _update_line(self) -> None:
         """Update the line drawing and position based on cell positions.

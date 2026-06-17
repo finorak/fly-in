@@ -96,7 +96,29 @@ def duplicate_connection(
     """
     for conn in connection_models:
         if conn.connecton_name[::-1] == connection.connecton_name:
-            print(conn.connecton_name)
+            return True
+    return False
+
+
+def start_lead_to_goal(
+        current_cell: Any,
+        end_zone: Any
+        ) -> bool:
+    """In case someone where to input
+    a map that doesn't lead to the end goal,
+    we recursively go in each hub neighboor of
+    the current cell
+    Parameters:
+        current_cell: the current cell we are in
+        end_zone: the goal
+    Returns:
+        boolean value.
+    """
+    if current_cell == end_zone:
+        return True
+    neighboors = current_cell.neighboors
+    for neighboor in neighboors:
+        if start_lead_to_goal(neighboor, end_zone):
             return True
     return False
 
@@ -124,7 +146,7 @@ def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
     x: int = x_max if x_max > -x_min else -x_min
     y: int = y_max if y_max > -y_min else -y_min
     if x_min == -x:
-        x = x ** 2
+        x += 1
     if y_min == -y:
         y = y ** 2
     return x + 1, y + 1, x_min, y_min
