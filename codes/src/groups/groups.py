@@ -2,6 +2,8 @@ from typing import Any
 
 import pygame
 
+from settings import WIN_SIZE
+
 
 class SpriteGroup(pygame.sprite.Group):
     """This custom group let us controll
@@ -17,6 +19,10 @@ class SpriteGroup(pygame.sprite.Group):
         self.speed = 500
         self.offset = pygame.math.Vector2()
         self.zoom_scale: float = 1
+        self.internal_surf_size = WIN_SIZE
+        self.internal_surf = pygame.Surface((self.internal_surf_size), pygame.SRCALPHA)
+        self.internal_rect = self.internal_surf.get_rect(center=(WIN_SIZE[0] // 2, WIN_SIZE[1] // 2))
+        self.internal_surf_size_vector = pygame.math.Vector2(self.internal_surf_size)
 
     def update_offset(self, dt: float) -> None:
         """Updating the camera we see on the screen
@@ -40,13 +46,9 @@ class SpriteGroup(pygame.sprite.Group):
             event: the mousewheell
             dt: delta time.
         """
-        if event.y > 0:
-            self.zoom_scale += self.speed * dt
-        else:
-            self.zoom_scale -= self.speed * dt
-        ...
+        self.zoom_scale += event.y * dt
 
-    def custom_draw(self, screen: pygame.Surface, dt: float) -> None:
+    def custom_draw(self, screen: pygame.Surface, backgroun_image: pygame.Surface, dt: float) -> None:
         """A custom draw function that let us
         move the camera to the way we want it
         Parameters:
@@ -55,6 +57,7 @@ class SpriteGroup(pygame.sprite.Group):
             dt: delta time
         """
         self.update_offset(dt)
+        self.internal_surf.blit(backgroun_image)
         conn_sprites = [
                 sprite for sprite in self.sprites()
                 if hasattr(sprite, 'network')]
@@ -67,7 +70,10 @@ class SpriteGroup(pygame.sprite.Group):
                 offset = sprite.rect.center + self.offset
                 if sprite not in all_sprites:
                     offset = sprite.rect.topleft + self.offset
-                screen.blit(sprite.image, offset)
+                self.internal_surf.blit(sprite.image, offset)
+        scaled_surf = pygame.transform.scale(self.internal_surf, self.internal_surf_size_vector * self.zoom_scale)
+        scaled_rect = scaled_surf.get_rect(center=(WIN_SIZE[0] // 2, WIN_SIZE[1] // 2))
+        screen.blit(scaled_surf, scaled_rect)
 
 
 class SimulationGroup(pygame.sprite.Group):

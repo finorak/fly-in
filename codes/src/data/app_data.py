@@ -3,10 +3,10 @@ from typing import Any
 from models.hub_model import HubModel
 from parser.parsing import Parser
 from src.cell import Cell
-from src.drone import Drone
 from src.connection import Connection
-from src.groups.groups import SpriteGroup, SimulationGroup
-from utils.helper import load_image_from_dir, load_image
+from src.drone import Drone
+from src.groups.groups import SimulationGroup, SpriteGroup
+from utils.helper import load_image, load_image_from_dir
 
 
 class AppData:

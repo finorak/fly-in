@@ -1,8 +1,7 @@
 from typing import Any
 
-from pydantic import BaseModel, Field, model_validator
-
 from models.hub_model import HubModel
+from pydantic import BaseModel, Field, model_validator
 
 
 class ConnectionModel(BaseModel):

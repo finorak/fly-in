@@ -2,7 +2,6 @@ from queue import PriorityQueue
 from typing import Any
 
 import pygame
-
 from src.cell import Cell
 from src.connection import Connection
 from src.drone import Drone
@@ -37,6 +36,9 @@ has if it's utils to us
         boolean value that determin if we found \
 the path or not
     """
+    if drone.found_path:
+        print(*drone.paths, sep=" => ")
+        return True
     count = 0
     open_set: PriorityQueue = PriorityQueue()
     start_zone = drone.current_zone
@@ -48,6 +50,7 @@ the path or not
     f_score = {cells[pos]: float("inf") for pos in cells}
     f_score[start_zone] = h(start_zone, end_zone)
     open_set_hash: set = {start_zone}
+    start: bool = True
     while open_set:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -58,8 +61,14 @@ the path or not
         current_zone: Cell = open_set.get()[2]
         open_set_hash.remove(current_zone)
         if current_zone == end_zone:
+            print(len(came_from))
+            drone.found_path = True
+            drone.paths = list(came_from)
             return True
         for neighboor in current_zone.find_neighboor(conections):
+            if start:
+                came_from[neighboor] = start_zone
+                start = False
             temp_g_score = g_score[current_zone] + 1
             if temp_g_score < g_score[neighboor]:
                 came_from[neighboor] = current_zone
@@ -69,3 +78,4 @@ the path or not
                     count += 1
                     open_set.put((f_score[neighboor], count, neighboor))
                     open_set_hash.add(neighboor)
+    return False

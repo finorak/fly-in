@@ -71,7 +71,8 @@ class App:
             dt: delta time used for animation
         """
         for drone in self.data.drones:
-            algorithme(drone, self.data.cells, self.data.connections)
+            if algorithme(drone, self.data.cells, self.data.connections):
+                drone.move_drone(dt)
 
     def update(self, dt: float) -> None:
         """update what we've got so far
@@ -91,5 +92,5 @@ class App:
                 that it doesn't glich even on
                 older pc.
         """
-        self.screen.blit(self.data.images['background'])
-        self.sprite_group.custom_draw(screen, dt)
+        screen.fill("white")
+        self.sprite_group.custom_draw(screen, self.data.images['background'], dt)

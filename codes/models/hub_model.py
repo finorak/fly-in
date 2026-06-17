@@ -1,7 +1,6 @@
 from typing import Any
 
 from pydantic import BaseModel, model_validator
-
 from utils.errors import MapError
 
 

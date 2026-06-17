@@ -1,6 +1,5 @@
 import pygame
 from settings import WIN_SIZE
-
 from src.groups.groups import CameraGroup
 
 
