@@ -18,7 +18,7 @@ install:
 
 run:
 	$(UV) run $(PYTHON) $(SRC) \
-		--input 'maps/hard/03_ultimate_challenge.txt'
+		--input 'maps/easy/01_linear_path.txt'
 
 flake:
 	$(FLAKE) $(SRC)

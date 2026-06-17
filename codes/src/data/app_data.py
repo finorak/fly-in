@@ -6,7 +6,7 @@ from src.cell import Cell
 from src.drone import Drone
 from src.connection import Connection
 from src.groups.groups import SpriteGroup, SimulationGroup
-from utils.helper import load_image_from_dir, load_images
+from utils.helper import load_image_from_dir, load_image
 
 
 class AppData:
@@ -47,7 +47,6 @@ class AppData:
             self.named_cell[cell.data.name] = cell
             self.cells[(x, y)] = cell
             self.first_cell = cell
-        print(self.cells)
 
     def create_connections(self, sprite_group: SpriteGroup) -> None:
         """Creating the connection between the hubs
@@ -80,7 +79,7 @@ class AppData:
         folder
         """
         data: dict[str, Any] = {}
-        data['background'] = load_images(
+        data['background'] = load_image(
                 'assets', 'img', 'background',
                 'background 1', '1.png')
         data['idl'] = load_image_from_dir('idl')

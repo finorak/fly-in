@@ -1,8 +1,9 @@
 import pygame
+from algorithm.find_path import algorithme
 from parser.parsing import Parser
 from settings import TITLE, WIN_SIZE
-from src.groups.groups import CameraGroup, SpriteGroup, SimulationGroup
 from src.data.app_data import AppData
+from src.groups.groups import CameraGroup, SimulationGroup, SpriteGroup
 
 
 class App:
@@ -50,6 +51,8 @@ class App:
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_f:
                         pygame.display.toggle_fullscreen()
+                if event.type == pygame.MOUSEWHEEL:
+                    self.sprite_group.zoom_camera(event, dt)
             self.update(dt)
             self.draw(self.screen, dt)
         pygame.quit()
@@ -61,7 +64,8 @@ class App:
         Parameters:
             dt: delta time used for animation
         """
-        ...
+        for drone in self.data.drones:
+            algorithme(drone, self.data.cells, self.data.connections)
 
     def update(self, dt: float) -> None:
         """update what we've got so far

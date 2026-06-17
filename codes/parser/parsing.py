@@ -5,7 +5,12 @@ from models.connection_model import ConnectionModel
 from models.hub_model import HubModel
 from settings import PATTERN, ZONES
 from utils.errors import MapError
-from utils.helper import get_dimension, is_numeric
+from utils.helper import (
+    duplicate_connection,
+    duplicate_position,
+    get_dimension,
+    is_numeric,
+)
 
 
 class Parser:
@@ -110,6 +115,8 @@ class Parser:
             if len(splited_data) == 4:
                 metadata = self.get_hub_metadata(index, splited_data[3])
             hub: HubModel = HubModel(**data, **metadata)
+            if duplicate_position(self.data['hub'], hub):
+                raise MapError("Position can't be duplicate")
             self.data['hub'].append(hub)
             self.hubs[name] = hub
             if key == "start_hub":
@@ -186,9 +193,12 @@ class Parser:
                     'hub_a': self.hubs[hub_a],
                     'hub_b': self.hubs[hub_b]
                     }
-            connection: ConnectionModel = ConnectionModel(**data, **metadata)
+            connection: ConnectionModel = ConnectionModel(
+                    **data, **metadata, connecton_name=connections
+                    )
             self.connections[hub_a] = {hub_b: connection}
-            self.connections[hub_b] = {hub_a: connection}
+            if duplicate_connection(self.conns, connection):
+                raise MapError("Duplicate connection")
             self.conns.append(connection)
         except Exception as e:
             raise MapError(f"Line {index}: {e}")

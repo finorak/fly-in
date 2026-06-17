@@ -3,8 +3,8 @@ from typing import Any, Optional
 
 import pygame
 import webcolors
+from models.connection_model import ConnectionModel
 from models.hub_model import HubModel
-
 from utils.errors import MapError
 
 
@@ -17,12 +17,15 @@ def get_path(*args: str) -> Any:
     return path.abspath(path.join(*args))
 
 
-def load_images(*args: str) -> pygame.Surface:
+def load_image(*args: str) -> pygame.Surface:
     """Getting the loaded images.
     Parameters:
         args: a list of string to represent the path
     Returns:
         the loaded image
+    ```
+    >>> load_images('assets', 'img', 'walk')
+    ```
     """
     return pygame.image.load(get_path(*args))
 
@@ -37,10 +40,11 @@ def load_image_from_dir(state: str) -> list[Any]:
         a list of available spries
     """
     return [
-            load_images(
+            load_image(
                 'assets', 'img', state, file
                 ) for file in listdir(
-                    get_path('assets', 'img', state))
+                    get_path('assets', 'img', state)
+                    )
             ]
 
 
@@ -65,6 +69,36 @@ def generate_color(color_name: str,
         if index is None:
             return webcolors.name_to_hex(falback_color)
         raise MapError(f"Line {index}: Color invalid")
+
+
+def duplicate_position(hub_models: list[HubModel], hub: HubModel) -> bool:
+    """Verifying if the cell's position is
+    already in the list
+    Parameters:
+        hub_models: a dict of hub_model
+        hub: the hub to verify
+    Returns:
+        boolean value
+    """
+    for model in hub_models:
+        if model.x == hub.x and model.y == hub.y:
+            return True
+    return False
+
+
+def duplicate_connection(
+        connection_models: list[ConnectionModel],
+        connection: ConnectionModel
+        ) -> bool:
+    """Verifying if the conneciton is duplicate
+    of not (a -> b 2 times or a -> b exist and
+    b -> a still exist)
+    """
+    for conn in connection_models:
+        if conn.connecton_name[::-1] == connection.connecton_name:
+            print(conn.connecton_name)
+            return True
+    return False
 
 
 def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
@@ -96,30 +130,23 @@ def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
     return x + 1, y + 1, x_min, y_min
 
 
-def get_correct_coordinate(
-        size: tuple[int, int],
-        x: int, y: int) -> tuple[int, int]:
-    """Getting the correct coordonate based
-    on the size
+def is_numeric(value: str) -> bool:
+    """A simple function that check if
+    a value is numerical or not
+    because the original, numeric
+    done't tell us if the vlau is a negative
+    or not
     Parameters:
-        size: the size we use as bases
-        x: the x coordonate of the point
-        y: the y coordonate of thhe point
-    Returns:
-        a tuple that represent the correct coordonate.
+        value: the value to verify
     ```
-    >>> pos = get_correct_coordinate((4, 1), -3, 0)
-    >>> (1, 0)
+    >>> is_numeric("5")
+        True
+    >>> is_numeric("-5")
+        True
+    >>> is_numeric(" -5")
+        False
     ```
     """
-    if x < 0:
-        x = size[0] + x
-    if y < 0:
-        y = size[1] + y
-    return x, y
-
-
-def is_numeric(value: str) -> bool:
     try:
         int(value)
         return True

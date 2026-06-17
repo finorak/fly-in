@@ -9,6 +9,7 @@ class ConnectionModel(BaseModel):
     """Connection model """
     hub_a: HubModel
     hub_b: HubModel
+    connecton_name: list[str]
     max_link_capacity: int = Field(default=1)
 
     @model_validator(mode='after')

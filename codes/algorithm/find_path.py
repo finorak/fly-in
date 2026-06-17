@@ -1,20 +1,23 @@
-from copy import deepcopy
-
-from src.drone import Drone
 from src.cell import Cell
 from src.connection import Connection
+from src.drone import Drone
 
 
-def algorithme(drone: Drone, cells: dict[tuple[int, int], Cell], coonnections: dict[tuple[int, int], Connection]) -> tuple[int, int]:
+def algorithme(
+        drone: Drone,
+        cells: dict[tuple[int, int], Cell],
+        conections: list[Connection]
+        ) -> tuple[int, int]:
     """Finding the best next cell to go to
     Parameters:
         drone: the drone that need the best cell \
 based on it's current cell
         cells: a dict containing all the cells.
-        coonnections: the connections that the current cell \
+        conections: the connections that the current cell \
 has if it's utils to us
     Returns:
-        a tuple, the position of the next cell
+        a tuple, the position of the next best cell
+        it can be the same as the drone's current
+        pos
     """
-    # TODO: Implementing the algorithme
-    ...
+    return 0, 0
