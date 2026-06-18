@@ -1,3 +1,16 @@
+"""
+IDEA FOR FINDING THE BEST NEXT CELL
+USING A* FOR THE SHORTEST PATH.
+
+ONCE THE PATH IS OCCUPIED BY A CELL,
+WE VERIFY IF IT CAN STILL OCCUPY ANOTHER
+DRONE, IF YES WE INCREMENT THE NUMBER OF CELL OCCUPIED
+BY THAT CELL, IF NOT WE SUPPOSE THE CURRENT CELL CAN'T
+BE REACHED. SO THAT THE DRONE WILL ATTEMPT TO FIND ANOTHER PATH
+IF IT FIND, IF NOT IT WAIT.
+"""
+
+
 from queue import PriorityQueue
 from typing import Any
 
@@ -37,7 +50,6 @@ has if it's utils to us
 the path or not
     """
     if drone.found_path:
-        print(*drone.paths, sep=" => ")
         return True
     count = 0
     open_set: PriorityQueue = PriorityQueue()
@@ -61,7 +73,6 @@ the path or not
         current_zone: Cell = open_set.get()[2]
         open_set_hash.remove(current_zone)
         if current_zone == end_zone:
-            print(len(came_from))
             drone.found_path = True
             drone.paths = list(came_from)
             return True

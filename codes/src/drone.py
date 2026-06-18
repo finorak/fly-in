@@ -1,8 +1,8 @@
 from typing import Any
-import pygame
 
-from src.data.drone_data import DroneData
+import pygame
 from src.cell import Cell
+from src.data.drone_data import DroneData
 
 
 class Drone(pygame.sprite.Sprite):
@@ -60,8 +60,6 @@ class Drone(pygame.sprite.Sprite):
                 frames accross diferent device
                 even on older oone
         """
-        if self.found_path:
-            self.move_drone(dt)
         if self.move:
             self.data.state = "walk"
         if self.current_zone == self.data.end_zone:
@@ -82,8 +80,9 @@ class Drone(pygame.sprite.Sprite):
         path, where paths is a list of cell
         dt: delta time
         """
-        for cell in self.paths:
-            ...
+        if not self.paths:
+            return
+        # print(target_zone.data.win_pos)
 
     def __str__(self) -> str:
         """How to represent the drone

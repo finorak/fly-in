@@ -148,7 +148,11 @@ def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
     if x_min == -x:
         x += 1
     if y_min == -y:
-        y = y ** 2
+        y += 1
+    if x_min < 0:
+        x_min = -x_min
+    if y_min < 0:
+        y_min = -y_min 
     return x + 1, y + 1, x_min, y_min
 
 

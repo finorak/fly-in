@@ -8,7 +8,7 @@ class CellData:
     """
     def __init__(
             self, max_drones: int, zone: str,
-            name: str, pos: tuple[int, int]) -> None:
+            name: str, pos: tuple[int, int], win_pos: tuple[int, int]) -> None:
         """Constructor for a cell class.
         To avoid the class to contain a lot of
         attribute.
@@ -24,6 +24,7 @@ class CellData:
         self.turn_cost: int = ZONES[self.zone]['cost']
         self.name: str = name
         self._drones: dict[str, list[Any]] = {}
+        self.win_pos = win_pos
         self.pos: tuple[int, int] = pos
         self.parent: list[list[tuple[int, int]]] = [
                 [] for _ in range(max_drones)]

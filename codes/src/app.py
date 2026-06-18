@@ -57,8 +57,8 @@ class App:
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_f:
                         pygame.display.toggle_fullscreen()
-                if event.type == pygame.MOUSEWHEEL:
-                    self.sprite_group.zoom_camera(event, dt)
+                # if event.type == pygame.MOUSEWHEEL:
+                #     self.sprite_group.zoom_camera(event, dt)
             self.update(dt)
             self.draw(self.screen, dt)
         pygame.quit()
@@ -93,4 +93,7 @@ class App:
                 older pc.
         """
         screen.fill("white")
-        self.sprite_group.custom_draw(screen, self.data.images['background'], dt)
+        self.sprite_group.custom_draw(
+                screen,
+                self.data.images['background'], dt
+                )

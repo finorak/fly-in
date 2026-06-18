@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 from parser.get_args import get_args
 from parser.parsing import Parser
@@ -17,5 +19,9 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except pygame.error:
-        pass
+    except pygame.error as e:
+        print(e, file=sys.stderr)
+    # TODO: REMOVE THIS BEFORE SETTING
+    # AS FINISHED
+    # except Exception as e:
+    #     print(e, file=sys.stderr)

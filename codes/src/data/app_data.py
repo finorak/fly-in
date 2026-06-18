@@ -37,13 +37,14 @@ class AppData:
         # use it to our need
         # placing the cell to the correct
         # coordonate
+        print(self.parser.size)
         for hub_name in self.parser.hubs:
             data: HubModel = self.parser.hubs[hub_name]
             data.x += self.parser.size[2]
             data.y += self.parser.size[3]
+            x, y = data.x, data.y
             cell: Cell = Cell(**data, dimension=self.parser.size,
-                              groups=self.groups)
-            x, y = cell.data.pos
+                              groups=self.groups, win_pos=(data.x, data.y))
             self.named_cell[cell.data.name] = cell
             self.cells[(x, y)] = cell
             self.first_cell = cell

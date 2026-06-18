@@ -12,7 +12,8 @@ class Cell(pygame.sprite.Sprite):
     def __init__(
             self, x: int, y: int, name: str,
             dimension: tuple[int, int, int, int],
-            groups: list[SimulationGroup | SpriteGroup], max_drones: int = 1,
+            groups: list[SimulationGroup | SpriteGroup],
+            win_pos: tuple[int, int], max_drones: int = 1,
             color: str = 'white', zone: str = 'normal'
             ) -> None:
         """Constructor for a cell instance.
@@ -35,7 +36,7 @@ our cell.
         self.dimension: tuple[int, int, int, int] = dimension
         self.data = CellData(
                 max_drones, zone,
-                name, (x - dimension[2], y - dimension[3]))
+                name, (x - dimension[2], y - dimension[3]), win_pos=win_pos)
         self.image: pygame.Surface = pygame.Surface(
             (CELL_WIDTH, CELL_HEIGHT)
             )
@@ -46,6 +47,9 @@ our cell.
                      y * (CELL_HEIGHT + CELL_HEIGHT_GAP))
             )
         self.neighboors: set[Cell] = set()
+
+    def update(self, dt: float) -> None:
+        ...
 
     def set_position(self, x: int, y: int) -> tuple[int, int]:
         # TODO: Might remove this function if find best
