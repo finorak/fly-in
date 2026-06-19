@@ -12,7 +12,7 @@ class HubModel(BaseModel):
     y: int
     zone: str = "normal"
     max_drones: int = 1
-    color: str = ""
+    color: str = "red"
 
     @model_validator(mode='after')
     def validate_model(self) -> 'HubModel':

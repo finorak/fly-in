@@ -13,8 +13,9 @@ class Cell(pygame.sprite.Sprite):
             self, x: int, y: int, name: str,
             dimension: tuple[int, int, int, int],
             groups: list[SimulationGroup | SpriteGroup],
-            win_pos: tuple[int, int], max_drones: int = 1,
-            color: str = 'white', zone: str = 'normal'
+            win_pos: tuple[int, int], image: pygame.Surface,
+            max_drones: int = 1, color: str = 'white',
+            zone: str = 'normal'
             ) -> None:
         """Constructor for a cell instance.
         Parameters:
@@ -48,9 +49,6 @@ our cell.
             )
         self.neighboors: set[Cell] = set()
 
-    def update(self, dt: float) -> None:
-        ...
-
     def set_position(self, x: int, y: int) -> tuple[int, int]:
         # TODO: Might remove this function if find best
         # way other than this.
@@ -68,14 +66,15 @@ our cell.
             y = self.dimension[1] - y
         return x, y
 
-    def find_neighboor(self, connections: list[Connection]) -> set['Cell']:
+    def find_neighboor(self, connections: dict[str, Connection]) -> set['Cell']:
         """Finding the neighboor of this cell,
         Parameters:
             connections: list of connections.
         """
         for conn in connections:
-            if conn.cell_a == self and conn.cell_b.data.zone != "blocked":
-                self.neighboors.add(conn.cell_b)
+            if conn.startswith(self.data.name):
+                next_cell = connections[conn].cell_b
+                self.neighboors.add(next_cell)
         return self.neighboors
 
     def __str__(self) -> str:

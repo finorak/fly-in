@@ -118,6 +118,8 @@ class Parser:
             if len(splited_data) == 4:
                 metadata = self.get_hub_metadata(index, splited_data[3])
             hub: HubModel = HubModel(**data, **metadata)
+            # TODO: using dict to store the hubs
+            # to save time
             if duplicate_position(self.data['hub'], hub):
                 raise MapError("Position can't be duplicate")
             self.data['hub'].append(hub)

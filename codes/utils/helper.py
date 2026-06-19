@@ -1,3 +1,4 @@
+from argparse import ArgumentParser, Namespace
 from os import listdir, path
 from typing import Any, Optional
 
@@ -6,6 +7,26 @@ import webcolors
 from models.connection_model import ConnectionModel
 from models.hub_model import HubModel
 from utils.errors import MapError
+
+
+def get_args() -> Namespace:
+    """Using argparse, we can add
+    another argument without modifying
+    to many codes, just adding a few lines
+    of codes.
+    """
+    parser: ArgumentParser = ArgumentParser(
+            description="A drone simulation app",
+            usage="uv run python -m codes --input [file]")
+    parser.add_argument(
+            "--input", type=str, help="Map file",
+            default="maps/easy/01_linear_path.txt"
+            )
+    parser.add_argument(
+            "--visual", type=bool, help="To show or not",
+            default=False
+            )
+    return parser.parse_args()
 
 
 def get_path(*args: str) -> Any:
@@ -100,7 +121,7 @@ def duplicate_connection(
     return False
 
 
-def start_lead_to_goal(
+def cell_lead_to_goal(
         current_cell: Any,
         end_zone: Any
         ) -> bool:
@@ -114,13 +135,24 @@ def start_lead_to_goal(
     Returns:
         boolean value.
     """
-    if current_cell == end_zone:
-        return True
-    neighboors = current_cell.neighboors
-    for neighboor in neighboors:
-        if start_lead_to_goal(neighboor, end_zone):
+    cells: set[Any] = set()
+
+    def find(current_cell: Any, end_zone: Any) -> bool:
+        nonlocal cells
+        if current_cell in cells:
+            return False
+        if current_cell == end_zone:
             return True
-    return False
+        cells.add(current_cell)
+        neighboors = current_cell.neighboors
+        _ = cells
+        cells = _
+        for neighboor in neighboors:
+            if find(neighboor, end_zone):
+                cells.clear()
+                return True
+        return False
+    return find(current_cell, end_zone)
 
 
 def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
@@ -152,7 +184,7 @@ def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
     if x_min < 0:
         x_min = -x_min
     if y_min < 0:
-        y_min = -y_min 
+        y_min = -y_min
     return x + 1, y + 1, x_min, y_min
 
 

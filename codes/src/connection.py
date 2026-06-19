@@ -9,8 +9,9 @@ class Connection(pygame.sprite.Sprite):
     """Representation of the connection.
     for this class
     """
-    def __init__(self, cell_a: Any, cell_b: Any,
-                 group: SpriteGroup,
+    def __init__(self,
+                 cell_a: Any, cell_b: Any,
+                 group: SpriteGroup, conn_name: str,
                  max_link_capacity: int = 1
                  ) -> None:
         """Constructor for a connection instance.
@@ -25,6 +26,8 @@ class Connection(pygame.sprite.Sprite):
         super().__init__(group)
         self.cell_a = cell_a
         self.cell_b = cell_b
+        self.conn_name: str = conn_name
+        self.dron_traversing: int = 0
         self.max_link_capacity = max_link_capacity
         self.network = True
         self.group = group

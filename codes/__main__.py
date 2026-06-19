@@ -1,9 +1,10 @@
 import sys
 
 import pygame
-from parser.get_args import get_args
+from algorithm.find_path import solve
 from parser.parsing import Parser
 from src.app import App
+from utils.helper import get_args
 
 
 def main() -> None:
@@ -13,6 +14,7 @@ def main() -> None:
     parser = Parser(args.input)
     app = App(parser, args.visual)
     app._init()
+    solve(app.data.drones, app.data.cells, app.data.dict_connections)
     app.run()
 
 

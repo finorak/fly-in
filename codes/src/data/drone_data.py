@@ -20,6 +20,6 @@ class DroneData:
         self.end_zone = end_zone
         self.frames = frames
         self.frame_speed: float = 8
-        self.speed: float = 5
+        self.speed: float = 200
         self.frame_index: float = 0
         self.state = 'idl'

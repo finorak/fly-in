@@ -1,11 +1,10 @@
 import pygame
-from algorithm.find_path import algorithme
 from parser.parsing import Parser
 from settings import TITLE, WIN_SIZE
 from src.data.app_data import AppData
 from src.groups.groups import CameraGroup, SimulationGroup, SpriteGroup
 from utils.errors import MapError
-from utils.helper import start_lead_to_goal
+from utils.helper import cell_lead_to_goal
 
 
 class App:
@@ -23,6 +22,7 @@ class App:
         self.simulation_group: SimulationGroup = SimulationGroup()
         self.camera_group: CameraGroup = CameraGroup()
         self.data = AppData(parser, [self.sprite_group, self.simulation_group])
+        self.turn: int = 0
         self.screen = pygame.display.set_mode(WIN_SIZE, pygame.SCALED)
         pygame.display.set_caption(TITLE)
 
@@ -37,7 +37,7 @@ class App:
         self.data.create_cells()
         self.data.create_connections(self.sprite_group)
         self.data.create_drones()
-        if not start_lead_to_goal(
+        if not cell_lead_to_goal(
                 self.data.start_zone[0],
                 self.data.end_zone):
             raise MapError("Map error, Can't solve it")
@@ -49,7 +49,6 @@ class App:
         clock = pygame.time.Clock()
         while running:
             dt = clock.tick() / 1000
-            self.solve(dt)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -57,22 +56,11 @@ class App:
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_f:
                         pygame.display.toggle_fullscreen()
-                # if event.type == pygame.MOUSEWHEEL:
-                #     self.sprite_group.zoom_camera(event, dt)
+                if event.type == pygame.MOUSEWHEEL:
+                    self.sprite_group.zoom_camera(event, dt)
             self.update(dt)
             self.draw(self.screen, dt)
         pygame.quit()
-
-    def solve(self, dt: float = 0) -> None:
-        """Solving the maze,
-        Iterating over all the drones
-        and trying to find the best solution
-        Parameters:
-            dt: delta time used for animation
-        """
-        for drone in self.data.drones:
-            if algorithme(drone, self.data.cells, self.data.connections):
-                drone.move_drone(dt)
 
     def update(self, dt: float) -> None:
         """update what we've got so far

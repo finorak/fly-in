@@ -22,3 +22,6 @@
 -[A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
 
 ### AI USAGE
+
+*For now, AI wasn't used at all, just my old maze generator project
+and the resources listed above.
