@@ -41,6 +41,7 @@ our cell.
         self.image: pygame.Surface = pygame.Surface(
             (CELL_WIDTH, CELL_HEIGHT)
             )
+        self.nb_drones: int = 0
         self.color = color
         self.image.fill(self.color)
         self.rect: pygame.Rect = self.image.get_rect(
@@ -66,11 +67,15 @@ our cell.
             y = self.dimension[1] - y
         return x, y
 
-    def find_neighboor(self, connections: dict[str, Connection]) -> set['Cell']:
+    def find_neighboor(
+            self, connections: dict[str, Connection]
+            ) -> set['Cell']:
         """Finding the neighboor of this cell,
         Parameters:
             connections: list of connections.
         """
+        if self.neighboors:
+            return self.neighboors
         for conn in connections:
             if conn.startswith(self.data.name):
                 next_cell = connections[conn].cell_b

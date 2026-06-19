@@ -88,10 +88,16 @@ the path or not
             # before going down that path
             # we first of all look if that path
             # can lead to 'end_hub' if not we don't go there
-            print(current_zone, neighboor)
             if not cell_lead_to_goal(neighboor, end_zone):
                 continue
-            temp_g_score = g_score[current] + 1
+            # conn_name = "-".join([current.data.name, neighboor.data.name])
+            # connection = connections[conn_name]
+            # SO THAT THAT 'priority' CAN BE PICKED
+            # NO MATER WHAT
+            if neighboor.data.zone == 'priority':
+                temp_g_score = g_score[current] - float("inf")
+            else:
+                temp_g_score = g_score[current] + 1
             if temp_g_score < g_score[neighboor]:
                 came_from[neighboor] = current
                 g_score[neighboor] = temp_g_score
@@ -104,10 +110,10 @@ the path or not
 
 
 def solve(
-        drones: list[Any],
+        drones: list[Drone],
         cells: dict[tuple[int, int], Cell],
         connections: dict[str, Connection]
-        ) -> bool:
+        ) -> None:
     """Solving the maze,
     Iterating over all the drones
     and trying to find the best solution
@@ -116,12 +122,27 @@ def solve(
         cells: a list of cells.
         connections: list of connections
     """
-    index: int = 0
-    while drones:
-        if algorithme(drones[index], cells, connections):
-            print(*drones[index].paths, sep=" => ")
-            drones.remove(drones[index])
+    while True:
+        for drone in drones[:]:
+            algorithme(drone, cells, connections)
+            paths = drone.paths
+            if not paths and not drones:
+                return
+            if not paths:
+                return
+            connection_name = "-".join(
+                    [drone.current_zone.data.name,
+                     paths[0].data.name]
+                    )
+            connection = connections[connection_name]
+            if connection.dron_traversing >= connection.max_link_capacity:
+                continue
+            if paths[0].data.zone == 'restricted':
+                drone.can_move = True
+                continue
+            paths[0].nb_drones += 1
+            if drone.current_zone == drone.data.end_zone:
+                drones.remove(drone)
+            drone.current_zone = paths[0]
         if len(drones) == 0:
-            return True
-        index = (index + 1) % len(drones)
-    return True
+            break

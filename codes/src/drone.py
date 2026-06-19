@@ -33,6 +33,7 @@ class Drone(pygame.sprite.Sprite):
         )
         self.current_zone: Cell = start_zone
         self.paths: list[Cell] = []
+        self.can_move: bool = True
         self.move: bool = False
         self.wait: bool = False
         self.found_path: bool = False
@@ -47,20 +48,20 @@ class Drone(pygame.sprite.Sprite):
                 frames accross diferent device
                 even on older oone
         """
-        if self.move:
-            self.data.state = "walk"
-        if self.current_zone == self.data.end_zone:
-            self.data.state = "landing"
-            self.move = False
+        # if self.move:
+        #     self.data.state = "walk"
+        # if self.current_zone == self.data.end_zone:
+        #     self.data.state = "landing"
+        #     self.move = False
         frame_len = len(self.frames[self.data.state])
-        if self.data.state == "landing" and int(
-                self.data.frame_index) == frame_len:
-            self.image = self.frames[self.data.state][frame_len - 1]
-        else:
-            self.data.frame_index += self.data.frame_speed * dt
-            self.image = self.frames[self.data.state][
-                int(self.data.frame_index) % frame_len
-            ]
+        # if self.data.state == "landing" and int(
+        #         self.data.frame_index) == frame_len:
+        #     self.image = self.frames[self.data.state][frame_len - 1]
+        # else:
+        self.data.frame_index += self.data.frame_speed * dt
+        self.image = self.frames[self.data.state][
+            int(self.data.frame_index) % frame_len
+        ]
 
     def place_drone(self, zone: Cell) -> Any:
         return zone.rect.center - pygame.math.Vector2((0, CELL_HEIGHT_GAP / 4))

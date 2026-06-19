@@ -4,7 +4,6 @@ from typing import Any, Optional
 
 import pygame
 import webcolors
-from models.connection_model import ConnectionModel
 from models.hub_model import HubModel
 from utils.errors import MapError
 
@@ -103,20 +102,6 @@ def duplicate_position(hub_models: list[HubModel], hub: HubModel) -> bool:
     """
     for model in hub_models:
         if model.x == hub.x and model.y == hub.y:
-            return True
-    return False
-
-
-def duplicate_connection(
-        connection_models: list[ConnectionModel],
-        connection: ConnectionModel
-        ) -> bool:
-    """Verifying if the conneciton is duplicate
-    of not (a -> b 2 times or a -> b exist and
-    b -> a still exist)
-    """
-    for conn in connection_models:
-        if conn.connecton_name[::-1] == connection.connecton_name:
             return True
     return False
 

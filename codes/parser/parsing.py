@@ -6,7 +6,6 @@ from models.hub_model import HubModel
 from settings import PATTERN, ZONES
 from utils.errors import MapError
 from utils.helper import (
-    duplicate_connection,
     duplicate_position,
     get_dimension,
     is_numeric,
@@ -27,7 +26,7 @@ class Parser:
                 'connection': []
                 }
         self.hubs: dict[str, HubModel] = {}
-        self.connections: dict[str, dict[str, ConnectionModel]] = {}
+        self.connections: dict[str, ConnectionModel] = {}
         self.key_found: set[str] = set()
         self.conns: list[ConnectionModel] = []
         # EXTRACTING THE MAP FILES
@@ -204,9 +203,10 @@ class Parser:
             connection: ConnectionModel = ConnectionModel(
                     **data, **metadata, connecton_name=connections
                     )
-            self.connections[hub_a] = {hub_b: connection}
-            if duplicate_connection(self.conns, connection):
+            if f"{hub_a}-{hub_b}" in self.connections \
+                    or f"{hub_b}-{hub_a}" in self.connections:
                 raise MapError("Duplicate connection")
+            self.connections[f"{hub_a}-{hub_b}"] = connection
             self.conns.append(connection)
         except Exception as e:
             raise MapError(f"Line {index}: {e}")
