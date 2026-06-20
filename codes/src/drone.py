@@ -33,6 +33,7 @@ class Drone(pygame.sprite.Sprite):
         )
         self.current_zone: Cell = start_zone
         self.paths: list[Cell] = []
+        self.restricted_next_zone: Cell | Any = None
         self.can_move: bool = True
         self.move: bool = False
         self.wait: bool = False

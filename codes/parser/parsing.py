@@ -161,6 +161,8 @@ class Parser:
                 if not key_value.isdigit():
                     raise MapError(f"Line {index}: Value must be integer.")
                 data[key] = int(key_value)
+                if data[key] < 1:
+                    raise MapError(f"Line {index}: max_drones must be > 0")
             elif key == 'color':
                 data[key] = key_value
             else:

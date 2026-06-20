@@ -49,7 +49,7 @@ def algorithme(
         cells: dict[tuple[int, int], Cell],
         connections: dict[str, Connection]
         ) -> bool:
-    """Finding the best next cell to go to
+    """Finding the best path to go to.
     Parameters:
         drone: the drone that need the best cell \
 based on it's current cell
@@ -84,11 +84,14 @@ the path or not
             drone.found_path = True
             drone.paths = list(came_from)
             return True
-        for neighboor in current.find_neighboor(connections):
+        neighboors = list(current.find_neighboor(connections))
+        index = 0
+        for neighboor in neighboors:
             # before going down that path
             # we first of all look if that path
             # can lead to 'end_hub' if not we don't go there
             if not cell_lead_to_goal(neighboor, end_zone):
+                index += 1
                 continue
             # conn_name = "-".join([current.data.name, neighboor.data.name])
             # connection = connections[conn_name]
@@ -96,7 +99,7 @@ the path or not
             # NO MATER WHAT
             if neighboor.data.zone == 'priority':
                 temp_g_score = g_score[current] - float("inf")
-            else:
+            else:  # otherwise we just add one
                 temp_g_score = g_score[current] + 1
             if temp_g_score < g_score[neighboor]:
                 came_from[neighboor] = current
@@ -106,7 +109,10 @@ the path or not
                     count += 1
                     open_set.put((f_score[neighboor], count, neighboor))
                     open_set_hash.add(neighboor)
-    return False
+            index += 1
+        if index == len(neighboors) - 1:
+            return False
+    return False # just to avoid mypy
 
 
 def solve(
@@ -123,26 +129,37 @@ def solve(
         connections: list of connections
     """
     while True:
+        drone_turns: list[str] = []
         for drone in drones[:]:
+            if not drone.can_move:
+                drone.can_move = True
+                drone.current_zone = drone.restricted_next_zone
+                drone.restricted_next_zone = None
+                continue
+            # SEARCHING PATH FOR THE CURRENT
+            # ZONE THE DRONE IS IN
             algorithme(drone, cells, connections)
             paths = drone.paths
-            if not paths and not drones:
-                return
-            if not paths:
-                return
             connection_name = "-".join(
-                    [drone.current_zone.data.name,
-                     paths[0].data.name]
-                    )
+                [drone.current_zone.data.name,
+                    paths[0].data.name]
+                )
             connection = connections[connection_name]
+            # DRONE IS WAITING
             if connection.dron_traversing >= connection.max_link_capacity:
                 continue
             if paths[0].data.zone == 'restricted':
-                drone.can_move = True
+                drone.can_move = False
+                drone.restricted_next_zone = paths[0]
+                drone_turns.append(f"{drone.data.drone_id}-{connection_name}")
                 continue
             paths[0].nb_drones += 1
+            drone.current_zone = paths[0]
+            # REMOVING THE DRONE FROM THE LIST
             if drone.current_zone == drone.data.end_zone:
                 drones.remove(drone)
-            drone.current_zone = paths[0]
-        if len(drones) == 0:
+            drone_turns.append(f"{drone.data.drone_id}-{paths[0].data.name}")
+        turn: str = " ".join(drone_turns).strip()
+        print(turn)
+        if not drones:
             break

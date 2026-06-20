@@ -87,6 +87,7 @@ our cell.
         Returns:
             the format we want to represent this class
         """
-        return f"{self.data.name} pos: ({self.data.pos}), \
-max_drones: {self.data.max_drones}, \
-zone: {self.data.zone}, color: {self.color}"
+        return f"{self.data}"
+#         return f"{self.data.name} pos: ({self.data.pos}), \
+# max_drones: {self.data.max_drones}, \
+# zone: {self.data.zone}, color: {self.color}"
