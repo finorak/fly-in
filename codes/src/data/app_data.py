@@ -6,7 +6,7 @@ from src.cell import Cell
 from src.connection import Connection
 from src.drone import Drone
 from src.groups.groups import SimulationGroup, SpriteGroup
-from utils.helper import load_image, load_image_from_dir
+from utils.helper import load_image, load_image_from_dir, join_name
 
 
 class AppData:
@@ -56,7 +56,7 @@ class AppData:
         for conn in self.parser.conns:
             cell_a = self.named_cell[conn.hub_a.name]
             cell_b = self.named_cell[conn.hub_b.name]
-            conn_name: str = "-".join(conn.connecton_name)
+            conn_name: str = join_name(cell_a, cell_b)
             connection: Connection = Connection(
                 cell_a, cell_b,
                 group=sprite_group,
@@ -91,7 +91,7 @@ class AppData:
                 'background 1', '1.png')
         data['zone'] = load_image(
                 'assets', 'img', 'platform',
-                'zone.png'
+                'platform.png'
                 )
         data['idl'] = load_image_from_dir('idl')
         data['walk'] = load_image_from_dir('walk')

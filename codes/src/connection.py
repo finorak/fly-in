@@ -1,7 +1,7 @@
 from typing import Any
 
 import pygame
-from settings import LINE_COLOR
+from settings import LINE_COLOR, LINE_SIZE
 from src.groups.groups import SpriteGroup
 
 
@@ -27,10 +27,9 @@ class Connection(pygame.sprite.Sprite):
         self.cell_a = cell_a
         self.cell_b = cell_b
         self.conn_name: str = conn_name
-        self.dron_traversing: int = 0
+        self._nb_drones: int = 0
         self.max_link_capacity = max_link_capacity
         self.network = True
-        self.group = group
 
     def _update_line(self) -> None:
         """Update the line drawing and position based on cell positions.
@@ -53,7 +52,7 @@ class Connection(pygame.sprite.Sprite):
         pygame.draw.line(
                 self.image, LINE_COLOR,
                 (local_start_x, local_start_y),
-                (local_end_x, local_end_y), 2)
+                (local_end_x, local_end_y), LINE_SIZE)
         self.rect = self.image.get_frect(topleft=(min_x, min_y))
 
     def update(self, dt: float = 0) -> None:
@@ -62,8 +61,17 @@ class Connection(pygame.sprite.Sprite):
             dt: delta time
         """
         self._update_line()
+    
+    @property
+    def increment_drones_by(self) -> int:
+        return self._nb_drones
+    
+    @increment_drones_by.setter
+    def increment_drones_by(self, value: int) -> None:
+        self._nb_drones += value
+    
+    def is_full(self) -> bool:
+        return self.increment_drones_by >= self.max_link_capacity
 
     def __str__(self) -> str:
-        return f"Connecting {self.cell_a.data.name} \
-and {self.cell_b.data.name}:\
-capacity {self.max_link_capacity}"
+        return f"{self.conn_name}"

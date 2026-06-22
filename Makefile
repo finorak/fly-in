@@ -6,6 +6,7 @@ MYPY := $(BIN_DIR)/mypy
 PYLINT := $(BIN_DIR)/pylint
 UV := uv
 SRC := codes
+ARGS ?= "maps/easy/01_linear_path.txt"
 
 
 install:
@@ -18,7 +19,7 @@ install:
 
 run:
 	$(UV) run $(PYTHON) $(SRC) \
-		--input 'maps/easy/01_linear_path.txt'
+		--input $(ARGS)
 flake:
 	$(FLAKE) $(SRC)
 

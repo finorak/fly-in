@@ -41,31 +41,23 @@ our cell.
         self.image: pygame.Surface = pygame.Surface(
             (CELL_WIDTH, CELL_HEIGHT)
             )
-        self.nb_drones: int = 0
+        self._nb_drones: int = 0
         self.color = color
         self.image.fill(self.color)
         self.rect: pygame.Rect = self.image.get_rect(
             topleft=(x * (CELL_WIDTH + CELL_WIDTH_GAP),
                      y * (CELL_HEIGHT + CELL_HEIGHT_GAP))
             )
+        self.camera_offset: pygame.math.Vector2 = pygame.math.Vector2()
         self.neighboors: set[Cell] = set()
 
-    def set_position(self, x: int, y: int) -> tuple[int, int]:
-        # TODO: Might remove this function if find best
-        # way other than this.
-        """Setting the position of the cell so
-        that we can accept negative value.
+    def update(self, dt: float) -> None:
+        """For the hover effect, but for now,
+        we'll use this for debugging.
         Parameters:
-            x: the x coordinate of the cell.
-            y: the y coordinate of the cell.
-        Returns:
-            the normalized postion
+            dt: delta time
         """
-        if x < 0:
-            x = self.dimension[0] - x
-        if y < 0:
-            y = self.dimension[1] - y
-        return x, y
+        ...
 
     def find_neighboor(
             self, connections: dict[str, Connection]
@@ -74,20 +66,31 @@ our cell.
         Parameters:
             connections: list of connections.
         """
-        if self.neighboors:
-            return self.neighboors
         for conn in connections:
             if conn.startswith(self.data.name):
                 next_cell = connections[conn].cell_b
+                if next_cell.data.zone == "blocked":
+                    continue
                 self.neighboors.add(next_cell)
         return self.neighboors
+
+    @property
+    def increment_drones_by(self) -> int:
+        return self._nb_drones
+
+    @increment_drones_by.setter
+    def increment_drones_by(self, value: int) -> None:
+        self._nb_drones += value
+    
+    def is_full(self) -> bool:
+        return self.increment_drones_by >= self.data.max_drones
 
     def __str__(self) -> str:
         """How do we want to print this class
         Returns:
             the format we want to represent this class
         """
-        return f"{self.data}"
+        return f"{self.data.name}"
 #         return f"{self.data.name} pos: ({self.data.pos}), \
 # max_drones: {self.data.max_drones}, \
 # zone: {self.data.zone}, color: {self.color}"

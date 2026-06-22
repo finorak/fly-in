@@ -52,7 +52,7 @@ class SpriteGroup(pygame.sprite.Group):
 
     def custom_draw(
             self, screen: pygame.Surface,
-            backgroun_image: pygame.Surface, dt: float
+            background_image: pygame.Surface, dt: float
             ) -> None:
         """A custom draw function that let us
         move the camera to the way we want it
@@ -62,7 +62,7 @@ class SpriteGroup(pygame.sprite.Group):
             dt: delta time
         """
         self.update_offset(dt)
-        self.internal_surf.blit(backgroun_image)
+        self.internal_surf.blit(background_image)
         conn_sprites = [
                 sprite for sprite in self.sprites()
                 if hasattr(sprite, 'network')]

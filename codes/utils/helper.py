@@ -22,6 +22,10 @@ def get_args() -> Namespace:
             default="maps/easy/01_linear_path.txt"
             )
     parser.add_argument(
+        "--max", type=int,
+        default=44
+    )
+    parser.add_argument(
             "--visual", type=bool, help="To show or not",
             default=False
             )
@@ -79,6 +83,7 @@ def generate_color(color_name: str,
                         isn't correct
     Returns:
         hex representation of the color we extracted
+    >>> red_hex_color = genrate_color("red")
     """
     if not color_name.isalpha():
         raise MapError(f"Line {index}: color name isn't a string")
@@ -107,8 +112,8 @@ def duplicate_position(hub_models: list[HubModel], hub: HubModel) -> bool:
 
 
 def cell_lead_to_goal(
-        current_cell: Any,
-        end_zone: Any
+        current_zone: Any,
+        end_zone: Any,
         ) -> bool:
     """In case someone where to input
     a map that doesn't lead to the end goal,
@@ -117,28 +122,28 @@ def cell_lead_to_goal(
     Parameters:
         current_cell: the current cell we are in
         end_zone: the goal
+        solving: This tell us our current state \
+if we are solving it or just looking if the maze
+can be solved or not
     Returns:
         boolean value.
     """
-    cells: set[Any] = set()
-
-    def find(current_cell: Any, end_zone: Any) -> bool:
-        nonlocal cells
-        if current_cell in cells:
-            return False
-        if current_cell == end_zone:
+    stack = [current_zone]
+    visited: set = set()
+    while stack:
+        cell = stack.pop()
+        if cell in visited:
+            continue
+        if cell == end_zone:
             return True
-        cells.add(current_cell)
-        neighboors = current_cell.neighboors
-        _ = cells
-        cells = _
-        for neighboor in neighboors:
-            if find(neighboor, end_zone):
-                cells.clear()
-                return True
-        return False
-    return find(current_cell, end_zone)
-
+        visited.add(cell)
+        lst = list(cell.neighboors)
+        stack.extend(lst)
+        # for neighboor in stack:
+        #     if neighboor == current_zone:
+        #         return False
+    return False
+    
 
 def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
     """Getting the dimension, Just iterating
@@ -171,6 +176,19 @@ def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
     if y_min < 0:
         y_min = -y_min
     return x + 1, y + 1, x_min, y_min
+
+
+def join_name(cell_a: Any, cell_b: Any) -> str:
+    """This seem to be repetitive function
+    so we englobe it into this function
+    Parameters:
+        cell_a: a Cell
+        cell_b: a Cell
+    Returns:
+        the string representing the connection
+        between those two cells
+    """
+    return "-".join([cell_a.data.name, cell_b.data.name])
 
 
 def is_numeric(value: str) -> bool:

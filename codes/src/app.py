@@ -17,12 +17,13 @@ class App:
             visual: whever to show the visualisation
                     or not, by default we see
         """
-        pygame.init()
         self.sprite_group: SpriteGroup = SpriteGroup()
         self.simulation_group: SimulationGroup = SimulationGroup()
         self.camera_group: CameraGroup = CameraGroup()
         self.data = AppData(parser, [self.sprite_group, self.simulation_group])
-        self.turn: int = 0
+    
+    def init_gui(self) -> None:
+        pygame.init()
         self.screen = pygame.display.set_mode(WIN_SIZE, pygame.SCALED)
         pygame.display.set_caption(TITLE)
 

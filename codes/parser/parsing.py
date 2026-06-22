@@ -115,8 +115,10 @@ class Parser:
                     'y': y
                     }
             if len(splited_data) == 4:
-                metadata = self.get_hub_metadata(index, splited_data[3])
+                metadata = self.get_hub_metadata(key, index, splited_data[3])
             hub: HubModel = HubModel(**data, **metadata)
+            if key == 'end_hub' and hub.max_drones < self.data['nb_drones']:
+                raise MapError("Max drones must be greater than number of drone")
             # TODO: using dict to store the hubs
             # to save time
             if duplicate_position(self.data['hub'], hub):
@@ -130,9 +132,10 @@ class Parser:
         except Exception as e:
             raise MapError(f"Line {index}: {e}")
 
-    def get_hub_metadata(self, index: int, value: str) -> dict[str, str]:
+    def get_hub_metadata(self, hub_key: str, index: int, value: str) -> dict[str, str]:
         """Getting the metadata of the current hub
         Parameters:
+            hub_key: the key of the current hub
             index: the current line of the hub.
             value: the data to where to extract the
             metadata.
@@ -156,13 +159,13 @@ class Parser:
             if key == 'zone':
                 if key_value not in ZONES:
                     raise MapError(f'Line {index}: Zone not recognized.')
+                if hub_key in ("start_hub", "end_hub") and key_value == "blocked":
+                    raise MapError(f"Line {index}: start_hub and end_hub can't be blocked")
                 data['zone'] = key_value
             elif key == 'max_drones':
                 if not key_value.isdigit():
                     raise MapError(f"Line {index}: Value must be integer.")
                 data[key] = int(key_value)
-                if data[key] < 1:
-                    raise MapError(f"Line {index}: max_drones must be > 0")
             elif key == 'color':
                 data[key] = key_value
             else:
@@ -175,26 +178,28 @@ class Parser:
             index: the current line we are in from the input file
             key: keyword of the hub.
             value: data of the hub.
-        Returns:
-            None
         """
         if 'start_hub' not in self.key_found or \
                 'end_hub' not in self.key_found:
-            raise MapError(f"Line {index}: 'start_hub' or 'end_hub' not found")
+            raise MapError("'start_hub' or 'end_hub' not found")
         splited_value: list[str] = value.split(maxsplit=2)
         if len(splited_value) not in (1, 2):
-            raise MapError(f"Line {index}: Too many value to unpack")
+            raise MapError("Too many value to unpack")
         connections: list[str] = splited_value[0].split('-', maxsplit=1)
         try:
-            metadata: dict[str, Any] = {}
+            if len(connections) != 2:
+                raise MapError("Connection invalid")
+            metadata: dict[str, Any] = {"connection_name": splited_value[0]}
             hub_a: str = connections[0]
             hub_b: str = connections[1]
+            if hub_a == hub_b:
+                raise MapError(f"Line {index}: Can't connect the ssame hu")
             if hub_a.__contains__('-') or hub_a.__contains__(' '):
-                raise MapError(f"Line {index}: Hub name can't have ' ' or '-'")
+                raise MapError("Hub name can't have ' ' or '-'")
             if hub_b.__contains__('-') or hub_b.__contains__(' '):
-                raise MapError(f"Line {index}: Hub name can't have ' ' or '-'")
+                raise MapError("Hub name can't have ' ' or '-'")
             if hub_a not in self.hubs or hub_b not in self.hubs:
-                raise MapError(f"Line {index}: Hub name not recognized.")
+                raise MapError("Hub name not recognized.")
             if len(splited_value) == 2:
                 metadata = self.get_connection_metadata(
                         index, splited_value[1])
@@ -234,5 +239,7 @@ class Parser:
         if splited_string[0] != 'max_link_capacity':
             raise MapError(f"Line {index}: Unrecognized metadata value.")
         if not splited_string[1].isdigit():
+            raise MapError(f"Line {index}: Value must be positive integer")
+        if int(splited_string[1]) < 1:
             raise MapError(f"Line {index}: Value must be positive integer")
         return {splited_string[0]: int(splited_string[1])}

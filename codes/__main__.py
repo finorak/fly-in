@@ -1,7 +1,7 @@
 import sys
 
 import pygame
-from algorithm.find_path import solve
+from algorithm.turn import Turn
 from parser.parsing import Parser
 from src.app import App
 from utils.helper import get_args
@@ -13,8 +13,14 @@ def main() -> None:
     args = get_args()
     parser = Parser(args.input)
     app = App(parser, args.visual)
+    # this will be only activated
+    # if visualizer was added as
+    # a parrameters
+    app.init_gui()
     app._init()
-    solve(app.data.drones, app.data.cells, app.data.dict_connections)
+    turn = Turn(app.data.drones, app.data.cells, app.data.dict_connections)
+    turn.solve()
+    # this function is same as init_gui
     app.run()
 
 
@@ -23,7 +29,3 @@ if __name__ == "__main__":
         main()
     except pygame.error as e:
         print(e, file=sys.stderr)
-    # TODO: REMOVE THIS BEFORE SETTING
-    # AS FINISHED
-    # except Exception as e:
-    #     print(e, file=sys.stderr)

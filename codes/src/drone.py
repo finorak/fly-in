@@ -3,6 +3,7 @@ from typing import Any
 import pygame
 from settings import CELL_HEIGHT_GAP
 from src.cell import Cell
+from src.connection import Connection
 from src.data.drone_data import DroneData
 
 
@@ -32,12 +33,11 @@ class Drone(pygame.sprite.Sprite):
             center=self.place_drone(start_zone)
         )
         self.current_zone: Cell = start_zone
+        self.current_conneciton: Connection | Any = None
         self.paths: list[Cell] = []
         self.restricted_next_zone: Cell | Any = None
-        self.can_move: bool = True
         self.move: bool = False
         self.wait: bool = False
-        self.found_path: bool = False
 
     def update(self, dt: float) -> None:
         """We override the update method from
