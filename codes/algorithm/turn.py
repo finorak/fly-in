@@ -165,8 +165,8 @@ class Turn:
                         self.temp_cells.append(drone)
                 drone_turns.append(f"{drone.data.drone_id}-{place}")
             turn: str = " ".join(drone_turns)
-            # if turn:
-            print(turn)
+            if turn:
+                print(turn)
             turn_counter += 1
         print(turn_counter)
         return turn_counter

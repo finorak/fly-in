@@ -23,7 +23,7 @@ def get_args() -> Namespace:
             )
     parser.add_argument(
         "--max", type=int,
-        default=44
+        default=45
     )
     parser.add_argument(
             "--visual", type=bool, help="To show or not",

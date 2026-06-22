@@ -1,0 +1,37 @@
+nb_drones: 8
+
+start_hub: start 0 0 [color=green max_drones=8]
+
+hub: a1 1 3 [color=blue]
+hub: a2 1 1 [color=blue]
+hub: a3 1 -1 [color=blue]
+hub: a4 1 -3 [color=blue]
+
+hub: bottleneck 2 0 [color=yellow]
+
+hub: b1 3 3 [color=blue]
+hub: b2 3 1 [color=blue]
+hub: b3 3 -1 [color=blue]
+hub: b4 3 -3 [color=blue]
+
+end_hub: goal 4 0 [color=red max_drones=8]
+
+connection: start-a1
+connection: start-a2
+connection: start-a3
+connection: start-a4
+
+connection: a1-bottleneck
+connection: a2-bottleneck
+connection: a3-bottleneck
+connection: a4-bottleneck
+
+connection: bottleneck-b1
+connection: bottleneck-b2
+connection: bottleneck-b3
+connection: bottleneck-b4
+
+connection: b1-goal
+connection: b2-goal
+connection: b3-goal
+connection: b4-goal

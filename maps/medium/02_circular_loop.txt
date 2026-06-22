@@ -12,7 +12,7 @@ end_hub: goal 4 0 [color=red max_drones=6]
 connection: start-loop_a
 connection: loop_a-loop_b
 connection: loop_b-loop_c
+connection: exit_point-goal
 connection: loop_c-loop_d
 connection: loop_d-loop_a
 connection: loop_b-exit_point
-connection: exit_point-goal

@@ -1,0 +1,56 @@
+nb_drones: 12
+
+start_hub: start 0 0 [color=green max_drones=12]
+
+hub: a 1 2 [color=blue]
+hub: b 1 0 [color=blue]
+hub: c 1 -2 [color=blue]
+
+hub: d 2 3 [color=blue]
+hub: e 2 1 [color=blue]
+hub: f 2 -1 [color=blue]
+hub: g 2 -3 [color=blue]
+
+hub: h 3 2 [color=blue]
+hub: i 3 0 [color=blue]
+hub: j 3 -2 [color=blue]
+
+hub: k 4 1 [color=blue]
+hub: l 4 -1 [color=blue]
+
+end_hub: goal 5 0 [color=red max_drones=12]
+
+connection: start-a
+connection: start-b
+connection: start-c
+
+connection: a-d
+connection: a-e
+connection: b-e
+connection: b-f
+connection: c-f
+connection: c-g
+
+connection: d-e
+connection: e-f
+connection: f-g
+
+connection: d-h
+connection: e-h
+connection: e-i
+connection: f-i
+connection: f-j
+connection: g-j
+
+connection: h-i
+connection: i-j
+
+connection: h-k
+connection: i-k
+connection: i-l
+connection: j-l
+
+connection: k-l
+
+connection: k-goal
+connection: l-goal
