@@ -56,10 +56,10 @@ class Turn:
 
 
     def algorithme(
-        self, drone: Drone,
-        cells: dict[tuple[int, int], Cell],
-        connections: dict[str, Connection]
-        ) -> list[Cell]:
+            self, drone: Drone,
+            cells: dict[tuple[int, int], Cell],
+            connections: dict[str, Connection]
+            ) -> list[Cell]:
         """Finding the best path to go to.
         Parameters:
             drone: the drone that need the best cell \
@@ -74,12 +74,12 @@ class Turn:
         count = 0
         open_set: PriorityQueue = PriorityQueue()
         current_zone = drone.current_zone
-        open_set.put((float("inf"), count, current_zone))
         end_zone = drone.data.end_zone
+        open_set.put((self.h(current_zone, end_zone), count, current_zone))
         came_from: dict[Cell, Cell] = {}
         g_score = {cells[pos]: float("inf") for pos in cells}
-        g_score[drone.current_zone] = 0
-        f_score = {cells[pos]: float("inf") for pos in cells}
+        g_score[current_zone] = 0
+        f_score: dict[Cell, float] = {cells[pos]: float("inf") for pos in cells}
         f_score[current_zone] = self.h(current_zone, end_zone)
         open_set_hash: set = {current_zone}
         while not open_set.empty():
@@ -91,29 +91,31 @@ class Turn:
                 if not cell_lead_to_goal(neighboor, end_zone):
                     continue
                 # # AVOIDING PATH THAT LEAD TO DEAD END
+                if neighboor in drone.paths:
+                    continue
                 # FIND ANOTHER PATH; THIS ONE IS FULL
                 conn_name = join_name(current, neighboor)
                 connection = connections[conn_name]
                 # Can't go to that cell
-                if connection.is_full() or neighboor.is_full():
+                if connection.is_full() or (neighboor.is_full() and neighboor != end_zone):
                     continue
                 # might as well this information later on
                 # but for now, w'll just comment till
                 # we find the use of it
+                temp_g_score = g_score[current] + current.data.turn_cost
                 if neighboor.data.zone == "priority":
                     temp_g_score = -float("inf")
-                else:
-                    temp_g_score = g_score[current] + 1
-                if temp_g_score < g_score[neighboor]:
+                if temp_g_score <= g_score[neighboor]:
                     came_from[neighboor] = current
                     g_score[neighboor] = temp_g_score
                     f_score[neighboor] = temp_g_score + self.h(neighboor, end_zone)
+                    if neighboor.data.zone == "priority":
+                        f_score[neighboor] = -float("inf")
                     if neighboor not in open_set_hash:
                         count += 1
                         open_set.put((f_score[neighboor], count, neighboor))
                         open_set_hash.add(neighboor)
         return list(came_from)
-
 
     def solve(self) -> int:
         """Solving the maze,
@@ -140,14 +142,13 @@ class Turn:
                 # THE HUB IS OCCUPIED SO THAT
                 # THE DRONE MUST WAIT A TURN
                 if not paths:
-                    # print(*self.drones, drone.current_zone, sep=" | ")
                     continue
-                if paths[0].is_full():
+                if paths[0].is_full() and paths[0] != drone.data.end_zone:
+                    continue
+                if paths[0] in drone.paths:
                     continue
                 connection_name = join_name(drone.current_zone, paths[0])
                 connection = self.connections[connection_name]
-                if connection.is_full():
-                    continue
                 # DRONE IS WAITING FOR THIS CONNECTION
                 # TO BE AVAILABLE AGAIN, IN THE NEXT TURN
                 place: list[Connection | Cell] | Any = paths[0]
@@ -159,6 +160,7 @@ class Turn:
                 else:
                     drone.current_zone.increment_drones_by = -1
                     drone.current_zone = paths[0]
+                    drone.paths.add(paths[0])
                     drone.current_zone.increment_drones_by = 1
                     if drone.current_zone == drone.data.end_zone:
                         self.drones.remove(drone)

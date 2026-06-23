@@ -117,18 +117,14 @@ class Parser:
             if len(splited_data) == 4:
                 metadata = self.get_hub_metadata(key, index, splited_data[3])
             hub: HubModel = HubModel(**data, **metadata)
-            if key == 'end_hub' and hub.max_drones < self.data['nb_drones']:
-                raise MapError("Max drones must be greater than number of drone")
-            # TODO: using dict to store the hubs
-            # to save time
             if duplicate_position(self.data['hub'], hub):
                 raise MapError("Position can't be duplicate")
-            self.data['hub'].append(hub)
-            self.hubs[name] = hub
             if key == "start_hub":
                 self.start = name
             elif key == "end_hub":
                 self.end = name
+            self.data['hub'].append(hub)
+            self.hubs[name] = hub
         except Exception as e:
             raise MapError(f"Line {index}: {e}")
 

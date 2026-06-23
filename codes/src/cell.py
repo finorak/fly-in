@@ -90,7 +90,7 @@ our cell.
         Returns:
             the format we want to represent this class
         """
-        return f"{self.data.name}"
+        return f"{self.data.name} {self.increment_drones_by}/{self.data.max_drones}"
 #         return f"{self.data.name} pos: ({self.data.pos}), \
 # max_drones: {self.data.max_drones}, \
 # zone: {self.data.zone}, color: {self.color}"

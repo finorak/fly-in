@@ -130,20 +130,18 @@ can be solved or not
     """
     stack = [current_zone]
     visited: set = set()
+    turn_counter = 0
     while stack:
         cell = stack.pop()
         if cell in visited:
             continue
         if cell == end_zone:
             return True
+        turn_counter += cell.data.turn_cost
         visited.add(cell)
-        lst = list(cell.neighboors)
-        stack.extend(lst)
-        # for neighboor in stack:
-        #     if neighboor == current_zone:
-        #         return False
+        stack.extend(cell.neighboors)
     return False
-    
+
 
 def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
     """Getting the dimension, Just iterating

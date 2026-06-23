@@ -61,17 +61,17 @@ class Connection(pygame.sprite.Sprite):
             dt: delta time
         """
         self._update_line()
-    
+
     @property
     def increment_drones_by(self) -> int:
         return self._nb_drones
-    
+
     @increment_drones_by.setter
     def increment_drones_by(self, value: int) -> None:
         self._nb_drones += value
-    
+
     def is_full(self) -> bool:
         return self.increment_drones_by >= self.max_link_capacity
 
     def __str__(self) -> str:
-        return f"{self.conn_name}"
+        return f"{self.conn_name} {self.increment_drones_by}/{self.max_link_capacity}"

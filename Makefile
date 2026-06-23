@@ -20,6 +20,7 @@ install:
 run:
 	$(UV) run $(PYTHON) $(SRC) \
 		--input $(ARGS)
+
 flake:
 	$(FLAKE) $(SRC)
 

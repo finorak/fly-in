@@ -34,7 +34,7 @@ class Drone(pygame.sprite.Sprite):
         )
         self.current_zone: Cell = start_zone
         self.current_conneciton: Connection | Any = None
-        self.paths: list[Cell] = []
+        self.paths: set[Cell] = {start_zone}
         self.restricted_next_zone: Cell | Any = None
         self.move: bool = False
         self.wait: bool = False
@@ -73,9 +73,9 @@ class Drone(pygame.sprite.Sprite):
         Parameters:
             dt: delta time
         """
-        if not self.paths or self.current_zone == self.data.end_zone:
+        if not self.paths:
             return
-        target_zone = self.paths[0]
+        target_zone = list(self.paths)[0]
         target_x, target_y = self.place_drone(target_zone)
         dx = target_x - self.rect.centerx
         dy = target_y - self.rect.centery
