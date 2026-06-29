@@ -9,4 +9,4 @@ end_hub: goal 3 0 [color=red]
 connection: start-a
 connection: a-b
 connection: b-start
-connection: b-goal
+connection: start-goal

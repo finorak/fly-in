@@ -1,7 +1,7 @@
 import sys
 
 import pygame
-from algorithm.turn import Turn
+from algorithm.new_algo import Algo
 from parser.parsing import Parser
 from src.app import App
 from utils.helper import get_args
@@ -18,7 +18,7 @@ def main() -> None:
     # a parrameters
     app.init_gui()
     app._init()
-    turn = Turn(app.data.drones, app.data.cells, app.data.dict_connections)
+    turn = Algo(app.data.drones, app.data.cells, app.data.dict_connections)
     turn.solve()
     # this function is same as init_gui
     app.run()

@@ -1,5 +1,6 @@
 from argparse import ArgumentParser, Namespace
 from os import listdir, path
+import sys
 from typing import Any, Optional
 
 import pygame
@@ -211,3 +212,13 @@ def is_numeric(value: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+def quit_app() -> None:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit(0)
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_f:
+                pygame.display.toggle_fullscreen()

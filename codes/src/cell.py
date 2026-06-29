@@ -71,6 +71,8 @@ our cell.
                 next_cell = connections[conn].cell_b
                 if next_cell.data.zone == "blocked":
                     continue
+                if next_cell == self or next_cell in self.neighboors:
+                    continue
                 self.neighboors.add(next_cell)
         return self.neighboors
 
