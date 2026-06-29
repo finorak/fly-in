@@ -6,7 +6,7 @@ MYPY := $(BIN_DIR)/mypy
 PYLINT := $(BIN_DIR)/pylint
 UV := uv
 SRC := codes
-ARGS ?= "maps/easy/01_linear_path.txt"
+ARGS ?= "test_map.txt"
 
 
 install:
@@ -21,11 +21,18 @@ run:
 	$(UV) run $(PYTHON) $(SRC) \
 		--input $(ARGS)
 
+visual:
+	$(UV) run $(PYTHON) $(SRC) \
+		--visual --input $(ARGS)
+
 flake:
 	$(FLAKE) $(SRC)
 
 lint: flake
 	$(MYPY) $(SRC)
+
+lint-strict: flake
+	$(MYPY) $(SRC) --strict
 
 pylint:
 	$(PYLINT) $(SRC)
@@ -45,4 +52,4 @@ fclean: clean
 
 re: fclean install
 
-.PHONY = install run flake mypy re clean fclean list debug
+.PHONY = install run flake mypy re clean fclean list debug visual

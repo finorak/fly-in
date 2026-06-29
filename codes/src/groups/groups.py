@@ -1,7 +1,6 @@
 from typing import Any
 
 import pygame
-
 from settings import WIN_SIZE
 
 
@@ -87,27 +86,3 @@ class SpriteGroup(pygame.sprite.Group):
         scaled_rect = scaled_surf.get_rect(
                 center=(WIN_SIZE[0] // 2, WIN_SIZE[1] // 2))
         screen.blit(scaled_surf, scaled_rect)
-
-
-class SimulationGroup(pygame.sprite.Group):
-    """This class we'll be mainly used to
-    controll the sprites for our simulation
-    """
-    def __init__(self) -> None:
-        """Constructor for a simulationGroup
-        instance.
-        """
-        super().__init__()
-
-    def custom_draw(self, dt: float = 0) -> None:
-        """Cusom draw for the simulation class
-        that let us controll the simuluation
-        sprites
-        Parameters:
-            dt: delta time
-        """
-
-
-class CameraGroup(pygame.sprite.Group):
-    def __init__(self) -> None:
-        super().__init__()

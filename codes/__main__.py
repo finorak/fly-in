@@ -1,7 +1,7 @@
 import sys
 
 import pygame
-from algorithm.new_algo import Algo
+from algorithm.custom_bfs import CustomBFS
 from parser.parsing import Parser
 from src.app import App
 from utils.helper import get_args
@@ -16,12 +16,14 @@ def main() -> None:
     # this will be only activated
     # if visualizer was added as
     # a parrameters
-    app.init_gui()
-    app._init()
-    turn = Algo(app.data.drones, app.data.cells, app.data.dict_connections)
+    app.init()
+    turn = CustomBFS(
+            app.data.drones, app.data.cells, app.data.dict_connections
+            )
     turn.solve()
     # this function is same as init_gui
-    app.run()
+    if args.visual:
+        app.run(turn.drones_cpy)
 
 
 if __name__ == "__main__":

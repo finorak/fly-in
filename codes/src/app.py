@@ -1,8 +1,9 @@
 import pygame
 from parser.parsing import Parser
+from src.drone import Drone
 from settings import TITLE, WIN_SIZE
-from src.data.app_data import AppData
-from src.groups.groups import CameraGroup, SimulationGroup, SpriteGroup
+from src.data.data import AppData
+from src.groups.groups import SpriteGroup
 from utils.errors import MapError
 from utils.helper import cell_lead_to_goal
 
@@ -17,17 +18,20 @@ class App:
             visual: whever to show the visualisation
                     or not, by default we see
         """
-        self.sprite_group: SpriteGroup = SpriteGroup()
-        self.simulation_group: SimulationGroup = SimulationGroup()
-        self.camera_group: CameraGroup = CameraGroup()
-        self.data = AppData(parser, [self.sprite_group, self.simulation_group])
-    
-    def init_gui(self) -> None:
         pygame.init()
+        if visual:
+            self.init_gui()
+        self.sprite_group: SpriteGroup = SpriteGroup()
+        self.data = AppData(parser, [self.sprite_group])
+
+    def init_gui(self) -> None:
+        """Initializing gui,
+        THis will be only used, if visual is True
+        """
         self.screen = pygame.display.set_mode(WIN_SIZE, pygame.SCALED)
         pygame.display.set_caption(TITLE)
 
-    def _init(self) -> None:
+    def init(self) -> None:
         """We avoid lunching any function from
         the init method, so that's why we
         use this fuinction to do that task
@@ -43,13 +47,16 @@ class App:
                 self.data.end_zone):
             raise MapError("Map error, Can't solve it")
 
-    def run(self) -> None:
+    def run(self, drones: list[Drone]) -> None:
         """The function to run the program.
+        Parameters:
+            drones: list of drone.
         """
         running = True
         clock = pygame.time.Clock()
         while running:
             dt = clock.tick() / 1000
+            self.move_drones(drones, dt)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -62,6 +69,14 @@ class App:
             self.update(dt)
             self.draw(self.screen, dt)
         pygame.quit()
+
+    def move_drones(self, drones: list[Drone], dt: float) -> None:
+        """FUnction used to move all drones to the
+        end zone.
+        Parameters:
+            drones: list of drone to move.
+            dt: delta time.
+        """
 
     def update(self, dt: float) -> None:
         """update what we've got so far

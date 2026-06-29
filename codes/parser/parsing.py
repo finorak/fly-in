@@ -1,9 +1,8 @@
 import re
 from typing import Any
 
-from models.connection_model import ConnectionModel
-from models.hub_model import HubModel
-from settings import PATTERN, ZONES
+from models.base_model import ConnectionModel, HubModel
+from settings import DRONE_LIMITS, PATTERN, ZONES
 from utils.errors import MapError
 from utils.helper import (
     duplicate_position,
@@ -66,10 +65,10 @@ class Parser:
                     raise MapError(f"Line {index}: must be 'nb_coders'.")
                 try:
                     data = int(curr_line[1].strip())
-                    if data < 0:
+                    if data < 0 or data > DRONE_LIMITS:
                         raise MapError(
-                                f"Line {index}: value must "
-                                "be positiv integer.")
+                                f"Line {index}: Drone number must be "
+                                "between 0 and {DRONE_LIMITS}")
                 except Exception:
                     raise MapError(
                             f"Line {index}: value must "
@@ -128,7 +127,9 @@ class Parser:
         except Exception as e:
             raise MapError(f"Line {index}: {e}")
 
-    def get_hub_metadata(self, hub_key: str, index: int, value: str) -> dict[str, str]:
+    def get_hub_metadata(
+            self, hub_key: str, index: int, value: str
+            ) -> dict[str, str]:
         """Getting the metadata of the current hub
         Parameters:
             hub_key: the key of the current hub
@@ -155,8 +156,11 @@ class Parser:
             if key == 'zone':
                 if key_value not in ZONES:
                     raise MapError(f'Line {index}: Zone not recognized.')
-                if hub_key in ("start_hub", "end_hub") and key_value == "blocked":
-                    raise MapError(f"Line {index}: start_hub and end_hub can't be blocked")
+                if hub_key in (
+                        "start_hub", "end_hub"
+                        ) and key_value == "blocked":
+                    raise MapError(
+                            f"Line {index}: {hub_key} can't be blocked")
                 data['zone'] = key_value
             elif key == 'max_drones':
                 if not key_value.isdigit():
@@ -210,6 +214,7 @@ class Parser:
                     or f"{hub_b}-{hub_a}" in self.connections:
                 raise MapError("Duplicate connection")
             self.connections[f"{hub_a}-{hub_b}"] = connection
+            self.connections[f"{hub_b}-{hub_a}"] = connection
             self.conns.append(connection)
         except Exception as e:
             raise MapError(f"Line {index}: {e}")

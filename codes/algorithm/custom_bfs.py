@@ -1,37 +1,29 @@
-"""
-TODO: THE OUTPUT IS SOMEWHAT BROKEN, NEED TO FIX:
-THAT IS THE MOST IMPORTANT TASK FOR THIS
-
-"""
-
-
-
 from collections import deque
 from typing import Any
 
 from utils.helper import join_name, quit_app
 import sys
-from src.drone import Drone
-from src.cell import Cell
 from src.connection import Connection
 
 
-class Algo:
+class CustomBFS:
     def __init__(
         self,
-        drones: list[Drone],
-        cells: dict[tuple[int, int], Cell],
+        drones: list[Any],
+        cells: dict[tuple[int, int], Any],
         connecitons: dict[str, Connection],
     ) -> None:
         self.drones = drones
         self.cells = cells
         self.connections = connecitons
-        self.drones_cpy = self.drones.copy()
+        self.drones_cpy: list[Any] = []
 
-    def cell_cost_to_reach_goal(self, current_cell: Cell, end_zone: Cell) -> float:
+    def cell_cost_to_reach_goal(
+            self, current_cell: Any, end_zone: Any
+            ) -> float:
         neighboors = deque([current_cell])
-        came_from: dict[Cell, Cell | None] = {current_cell: None}
-        visited: set[Cell] = set()
+        came_from: dict[Any, Any | None] = {current_cell: None}
+        visited: set[Any] = set()
         while neighboors:
             current = neighboors.popleft()
             if current == end_zone:
@@ -52,15 +44,15 @@ class Algo:
 
     def can_go(
         self,
-        current_cell: Cell,
-        end_cell: Cell,
+        current_cell: Any,
+        end_cell: Any,
         connection: Connection | None,
-        neighboors: set[Cell],
+        neighboors: set[Any],
     ) -> bool:
         if current_cell == end_cell:
             return True
         current_best = self.cell_cost_to_reach_goal(current_cell, end_cell)
-        other_neighboors: list[Cell] = [
+        other_neighboors: list[Any] = [
                 cell for cell in neighboors if cell != current_cell
             ]
         if connection and connection.is_full():
@@ -69,25 +61,30 @@ class Algo:
                 if new_best <= current_best:
                     return False
         if current_cell.is_full():
-            other_neighboors: list[Cell] = [
-                cell for cell in neighboors if cell != current_cell
-            ]
             for cell in other_neighboors:
-                # TODO: learning why this doesn't
-                # work if <=, we got a large number
-                # of turn
                 new_best = self.cell_cost_to_reach_goal(cell, end_cell)
-                if new_best <= current_best:
+                if new_best < current_best:
                     return False
         return True
 
     def algorithme(
-        self, current_drone: Drone, connections: dict[str, Connection]
-    ) -> list[Cell]:
+        self, current_drone: Any, connections: dict[str, Connection]
+    ) -> list[Any]:
+        """The algorithme we use to find the best path based on the current
+        zone of the drone.
+        At each step of the drone, we loo, for the best
+        next cell, from there.
+        Parameters:
+            current_zone: the drone that need to find the next path.
+            connections: the connections, we use this to get
+            the current conneciton of the zone and it's neighboor
+        Returns:
+            list of path.
+        """
         current_zone = current_drone.current_zone
         end_zone = current_drone.data.end_zone
-        visited: set[Cell] = set()
-        came_frome: dict[Any, Cell | None] = {current_zone: None}
+        visited: set[Any] = set()
+        came_frome: dict[Any, Any | None] = {current_zone: None}
         neighboors = deque([current_zone])
         start_neighboors_len = len(current_zone.neighboors)
         counter = 0
@@ -102,7 +99,7 @@ class Algo:
             visited.add(current)
             current_neighboors = current.neighboors
             counter += 1
-            hubs: list[Cell] = []
+            hubs: list[Any] = []
             for neighboor in current_neighboors:
                 if neighboor in visited:
                     continue
@@ -128,7 +125,7 @@ class Algo:
             )
         if end_zone not in came_frome:
             return []
-        paths: list[Cell] = []
+        paths: list[Any] = []
         current = end_zone
         while current is not None:
             quit_app()
@@ -138,6 +135,16 @@ class Algo:
         return paths[1:]
 
     def solve(self) -> None:
+        """Just an api that communicate with algorithme.
+        We iterate the list of drones, till there is no
+        drone anymore.
+        and at each step, we get the paths we got from
+        algorithme, and take the first value in that list
+        if there is any, it might be empty if it still didn't
+        found a path for the current zone of the drone.
+        move the drone to that next cell, and so on
+        till it reach end zone.
+        """
         turn_counter: int = 0
         while self.drones:
             current_turn: list[str] = []
@@ -146,7 +153,6 @@ class Algo:
                 if drone.restricted_next_zone:
                     drone.current_conneciton.increment_drones_by = -1
                     drone.current_zone = drone.restricted_next_zone
-                    drone.current_zone.increment_drones_by = 1
                     drone.current_conneciton = None
                     drone.restricted_next_zone = None
                     current_turn.append(f"{drone}-{drone.current_zone}")
@@ -155,27 +161,31 @@ class Algo:
                 if not paths:
                     continue
                 next_hub = paths[0]
-                if next_hub.is_full() and next_hub != end_zone:
-                    continue
                 connection_name = join_name(drone.current_zone, next_hub)
                 connection = self.connections[connection_name]
-                if connection.is_full():
+                # the drone can't do anything at this point,
+                # it wait a turn
+                if connection.is_full() or (
+                        next_hub.is_full() and next_hub != end_zone):
                     continue
                 if next_hub.data.zone == "restricted":
                     drone.restricted_next_zone = next_hub
+                    next_hub.increment_drones_by = 1
                     drone.current_conneciton = connection
                     drone.current_zone.increment_drones_by = -1
                     connection.increment_drones_by = 1
                     current_turn.append(f"{drone}-{connection}")
+                    drone.paths.append(next_hub)
                     continue
                 drone.current_zone.increment_drones_by = -1
                 drone.current_zone = next_hub
                 drone.current_zone.increment_drones_by = 1
+                drone.paths.append(next_hub)
                 if drone.current_zone == end_zone:
+                    self.drones_cpy.append(drone)
                     self.drones.remove(drone)
                 current_turn.append(f"{drone}-{drone.current_zone}")
             turn = " ".join(current_turn)
             turn_counter += 1
             print(turn)
-        print()
-        print(f"Turn count: {turn_counter}", file=sys.stderr)
+        print(f"\nTurn count: {turn_counter}", file=sys.stderr)

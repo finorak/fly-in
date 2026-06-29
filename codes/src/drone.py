@@ -4,7 +4,29 @@ import pygame
 from settings import CELL_HEIGHT_GAP
 from src.cell import Cell
 from src.connection import Connection
-from src.data.drone_data import DroneData
+
+
+class DroneData:
+    """Drone data container
+    """
+    def __init__(self, drone_id: int, start_zone: Cell, end_zone: Cell,
+                 frames: dict[str, list[pygame.Surface]]
+                 ) -> None:
+        """Constructor for a drone instance.
+        Parameters:
+            start_zone: where the drone start
+            end_zone: where the simulation end.
+            frames: dict containing all the possible
+                    state a drone can have
+        """
+        self.drone_id = f"D{drone_id}"
+        self.start_zone = start_zone
+        self.end_zone = end_zone
+        self.frames = frames
+        self.frame_speed: float = 8
+        self.speed: float = 200
+        self.frame_index: float = 0
+        self.state = 'idl'
 
 
 class Drone(pygame.sprite.Sprite):
@@ -13,7 +35,7 @@ class Drone(pygame.sprite.Sprite):
     def __init__(
             self, drone_id: int, start_zone: Cell,
             end_zone: Cell, frames: dict[str, list[pygame.Surface]],
-            *groups: pygame.sprite.Group,
+            *groups: pygame.sprite.Group | Any,
     ) -> None:
         """Constructor for our drones.
         Parameters:
@@ -34,10 +56,11 @@ class Drone(pygame.sprite.Sprite):
         )
         self.current_zone: Cell = start_zone
         self.current_conneciton: Connection | Any = None
-        self.paths: set[Cell] = {start_zone}
+        self.paths: list[Cell] = []
         self.restricted_next_zone: Cell | Any = None
         self.move: bool = False
         self.wait: bool = False
+        self.target_index: int = 0
 
     def update(self, dt: float) -> None:
         """We override the update method from
@@ -65,6 +88,10 @@ class Drone(pygame.sprite.Sprite):
         ]
 
     def place_drone(self, zone: Cell) -> Any:
+        """Placing the drone to the place we want to put it.
+        Parameters:
+            zone: the zone to place the drone.
+        """
         return zone.rect.center - pygame.math.Vector2((0, CELL_HEIGHT_GAP / 4))
 
     def move_drone(self, dt: float) -> None:
@@ -75,17 +102,21 @@ class Drone(pygame.sprite.Sprite):
         """
         if not self.paths:
             return
-        target_zone = list(self.paths)[0]
+        if self.target_index >= len(self.paths):
+            self.kill()
+            return
+        target_zone = self.paths[self.target_index]
         target_x, target_y = self.place_drone(target_zone)
         dx = target_x - self.rect.centerx
         dy = target_y - self.rect.centery
-        distance = (dx**2 + dy**2)**0.5
-        if distance > 0:
+        distance = (dx ** 2 + dy ** 2) ** 0.5
+        if distance > 1:
             t = min(self.data.speed * dt, distance)
             self.rect.x = self.rect.x + (dx / distance) * t
             self.rect.y = self.rect.y + (dy / distance) * t
         else:
             self.current_zone = target_zone
+            self.target_index += 1
 
     def __str__(self) -> str:
         """How to represent the drone

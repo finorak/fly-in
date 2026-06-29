@@ -2,11 +2,15 @@
 """
 
 
+from typing import Any
+
 from utils.helper import generate_color
 
 # SCREEN SETTINGS
 WIN_SIZE = (980, 600)
 TITLE = "Fly in"
+
+DRONE_LIMITS = 200
 
 # CELL SETTINGS
 CELL_WIDTH = 80
@@ -26,7 +30,7 @@ BG_COLOR = generate_color("SandyBrown")
 LINE_COLOR = generate_color("black")
 
 # ZONES WITH THEM DEFAULT VALUES
-ZONES = {
+ZONES: dict[str, Any] = {
         'normal': {
             'color': '',
             'cost': 1,
@@ -41,6 +45,6 @@ ZONES = {
             },
         'blocked': {
             'color': 'red',
-            'cost': -1,
+            'cost': float("inf"),
             }
         }

@@ -1,11 +1,11 @@
+import sys
 from argparse import ArgumentParser, Namespace
 from os import listdir, path
-import sys
 from typing import Any, Optional
 
 import pygame
 import webcolors
-from models.hub_model import HubModel
+from models.base_model import HubModel
 from utils.errors import MapError
 
 
@@ -23,12 +23,8 @@ def get_args() -> Namespace:
             default="maps/easy/01_linear_path.txt"
             )
     parser.add_argument(
-        "--max", type=int,
-        default=45
-    )
-    parser.add_argument(
-            "--visual", type=bool, help="To show or not",
-            default=False
+            "--visual", help="To show or not",
+            action="store_true"
             )
     return parser.parse_args()
 
@@ -130,7 +126,7 @@ can be solved or not
         boolean value.
     """
     stack = [current_zone]
-    visited: set = set()
+    visited: set[Any] = set()
     turn_counter = 0
     while stack:
         cell = stack.pop()
@@ -215,6 +211,10 @@ def is_numeric(value: str) -> bool:
 
 
 def quit_app() -> None:
+    """This function will be used for the algorithm
+    so that even in the process of solving the graph
+    we can still quit.
+    """
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()

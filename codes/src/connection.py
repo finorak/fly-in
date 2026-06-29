@@ -64,14 +64,30 @@ class Connection(pygame.sprite.Sprite):
 
     @property
     def increment_drones_by(self) -> int:
+        """Instead of using the private attribute
+        we use this property.
+        """
         return self._nb_drones
 
     @increment_drones_by.setter
     def increment_drones_by(self, value: int) -> None:
+        """Instead of using the private attribute
+        we use this property.
+        """
         self._nb_drones += value
 
     def is_full(self) -> bool:
+        """Verifying if the cell is full
+        or not.
+        Returns:
+            True if full else False
+        """
         return self.increment_drones_by >= self.max_link_capacity
 
     def __str__(self) -> str:
-        return f"{self.conn_name} {self.increment_drones_by}/{self.max_link_capacity}"
+        """How do we want to print this class
+        Returns:
+            the format we want to represent this class
+        """
+        return f"{self.conn_name} \
+{self.increment_drones_by}/{self.max_link_capacity}"
