@@ -4,6 +4,7 @@ PYTHON := $(BIN_DIR)/python
 FLAKE := $(BIN_DIR)/flake8
 MYPY := $(BIN_DIR)/mypy
 PYLINT := $(BIN_DIR)/pylint
+DOCSTRING := $(BIN_DIR)/flake8-docstrings
 UV := uv
 SRC := codes
 ARGS ?= "test_map.txt"
@@ -36,6 +37,9 @@ lint-strict: flake
 
 pylint:
 	$(PYLINT) $(SRC)
+
+docstring: flake
+	$(DOCSTRING) $(SRC)
 
 debug:
 	uv run python -m pdb codes/__main__.py

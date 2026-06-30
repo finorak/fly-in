@@ -4,6 +4,7 @@ import pygame
 from settings import CELL_HEIGHT_GAP
 from src.cell import Cell
 from src.connection import Connection
+import random
 
 
 class DroneData:
@@ -24,8 +25,8 @@ class DroneData:
         self.end_zone = end_zone
         self.frames = frames
         self.frame_speed: float = 8
-        self.speed: float = 200
-        self.frame_index: float = 0
+        self.speed: float = 600
+        self.frame_index: float = random.randint(0, len(frames))
         self.state = 'idl'
 
 
@@ -72,16 +73,7 @@ class Drone(pygame.sprite.Sprite):
                 frames accross diferent device
                 even on older oone
         """
-        # if self.move:
-        #     self.data.state = "walk"
-        # if self.current_zone == self.data.end_zone:
-        #     self.data.state = "landing"
-        #     self.move = False
         frame_len = len(self.frames[self.data.state])
-        # if self.data.state == "landing" and int(
-        #         self.data.frame_index) == frame_len:
-        #     self.image = self.frames[self.data.state][frame_len - 1]
-        # else:
         self.data.frame_index += self.data.frame_speed * dt
         self.image = self.frames[self.data.state][
             int(self.data.frame_index) % frame_len
@@ -94,17 +86,16 @@ class Drone(pygame.sprite.Sprite):
         """
         return zone.rect.center - pygame.math.Vector2((0, CELL_HEIGHT_GAP / 4))
 
-    def move_drone(self, dt: float) -> None:
+    def move_drone(self, dt: float) -> bool:
         """Moving the drone, after finding the
         path, where paths is a list of cell
         Parameters:
             dt: delta time
         """
         if not self.paths:
-            return
+            return True
         if self.target_index >= len(self.paths):
-            self.kill()
-            return
+            return True
         target_zone = self.paths[self.target_index]
         target_x, target_y = self.place_drone(target_zone)
         dx = target_x - self.rect.centerx
@@ -112,11 +103,11 @@ class Drone(pygame.sprite.Sprite):
         distance = (dx ** 2 + dy ** 2) ** 0.5
         if distance > 1:
             t = min(self.data.speed * dt, distance)
-            self.rect.x = self.rect.x + (dx / distance) * t
-            self.rect.y = self.rect.y + (dy / distance) * t
-        else:
-            self.current_zone = target_zone
-            self.target_index += 1
+            self.rect.x += (dx / distance) * t
+            self.rect.y += (dy / distance) * t
+            return False
+        self.current_zone = target_zone
+        return True
 
     def __str__(self) -> str:
         """How to represent the drone

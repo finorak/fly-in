@@ -27,7 +27,8 @@ class SpriteGroup(pygame.sprite.Group):
                 self.internal_surf_size)
 
     def update_offset(self, dt: float) -> None:
-        """Updating the camera we see on the screen
+        """
+        Updating the camera we see on the screen
         I didn't use delta time for this one because
         it was way to slow, probably because the value is
         already betweeen 0->1, and dt is bettween

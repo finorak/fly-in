@@ -52,7 +52,9 @@ def load_image(*args: str) -> pygame.Surface:
 
 
 def load_image_from_dir(state: str) -> list[Any]:
-    """We already know where the images
+    """Loading images from dir using stat.
+
+    We already know where the images
     files are stored, so we use this function
     to avoid repeating this.
     Parameters:
@@ -112,7 +114,8 @@ def cell_lead_to_goal(
         current_zone: Any,
         end_zone: Any,
         ) -> bool:
-    """In case someone where to input
+    """
+    In case someone where to input
     a map that doesn't lead to the end goal,
     we recursively go in each hub neighboor of
     the current cell
@@ -211,7 +214,7 @@ def is_numeric(value: str) -> bool:
 
 
 def quit_app() -> None:
-    """This function will be used for the algorithm
+    """This function will be used for the algorithm.
     so that even in the process of solving the graph
     we can still quit.
     """

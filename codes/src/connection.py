@@ -89,5 +89,4 @@ class Connection(pygame.sprite.Sprite):
         Returns:
             the format we want to represent this class
         """
-        return f"{self.conn_name} \
-{self.increment_drones_by}/{self.max_link_capacity}"
+        return f"{self.conn_name}"

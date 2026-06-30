@@ -16,11 +16,12 @@ class CustomBFS:
         self.drones = drones
         self.cells = cells
         self.connections = connecitons
-        self.drones_cpy: list[Any] = []
+        self.drones_cpy: list[list[Any]] = []
 
+    @staticmethod
     def cell_cost_to_reach_goal(
-            self, current_cell: Any, end_zone: Any
-            ) -> float:
+            current_cell: Any, end_zone: Any
+        ) -> float:
         neighboors = deque([current_cell])
         came_from: dict[Any, Any | None] = {current_cell: None}
         visited: set[Any] = set()
@@ -43,18 +44,16 @@ class CustomBFS:
         return cost
 
     def can_go(
-        self,
-        current_cell: Any,
-        end_cell: Any,
-        connection: Connection | None,
-        neighboors: set[Any],
-    ) -> bool:
+            self, current_cell: Any,
+            end_cell: Any, connection: Connection | None,
+            neighboors: set[Any]
+            ) -> bool:
         if current_cell == end_cell:
             return True
         current_best = self.cell_cost_to_reach_goal(current_cell, end_cell)
         other_neighboors: list[Any] = [
-                cell for cell in neighboors if cell != current_cell
-            ]
+            cell for cell in neighboors if cell != current_cell
+        ]
         if connection and connection.is_full():
             for cell in other_neighboors:
                 new_best = self.cell_cost_to_reach_goal(cell, end_cell)
@@ -63,7 +62,7 @@ class CustomBFS:
         if current_cell.is_full():
             for cell in other_neighboors:
                 new_best = self.cell_cost_to_reach_goal(cell, end_cell)
-                if new_best < current_best:
+                if new_best <= current_best:
                     return False
         return True
 
@@ -147,6 +146,7 @@ class CustomBFS:
         """
         turn_counter: int = 0
         while self.drones:
+            turn_recorder: list[Any] = []
             current_turn: list[str] = []
             for drone in self.drones[:]:
                 end_zone = drone.data.end_zone
@@ -156,6 +156,7 @@ class CustomBFS:
                     drone.current_conneciton = None
                     drone.restricted_next_zone = None
                     current_turn.append(f"{drone}-{drone.current_zone}")
+                    turn_recorder.append(drone)
                     continue
                 paths = self.algorithme(drone, self.connections)
                 if not paths:
@@ -166,8 +167,10 @@ class CustomBFS:
                 # the drone can't do anything at this point,
                 # it wait a turn
                 if connection.is_full() or (
-                        next_hub.is_full() and next_hub != end_zone):
+                    next_hub.is_full() and next_hub != end_zone
+                ):
                     continue
+                turn_recorder.append(drone)
                 if next_hub.data.zone == "restricted":
                     drone.restricted_next_zone = next_hub
                     next_hub.increment_drones_by = 1
@@ -182,10 +185,13 @@ class CustomBFS:
                 drone.current_zone.increment_drones_by = 1
                 drone.paths.append(next_hub)
                 if drone.current_zone == end_zone:
-                    self.drones_cpy.append(drone)
                     self.drones.remove(drone)
                 current_turn.append(f"{drone}-{drone.current_zone}")
             turn = " ".join(current_turn)
+            self.drones_cpy.append(turn_recorder)
             turn_counter += 1
             print(turn)
+        for turn in self.drones_cpy:
+            for drone in turn:
+                drone.current_zone = drone.data.start_zone
         print(f"\nTurn count: {turn_counter}", file=sys.stderr)

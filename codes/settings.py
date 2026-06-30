@@ -7,7 +7,7 @@ from typing import Any
 from utils.helper import generate_color
 
 # SCREEN SETTINGS
-WIN_SIZE = (980, 600)
+WIN_SIZE = (1680, 920)
 TITLE = "Fly in"
 
 DRONE_LIMITS = 200

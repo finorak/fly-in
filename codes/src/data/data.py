@@ -7,6 +7,7 @@ from src.connection import Connection
 from src.drone import Drone
 from src.groups.groups import SpriteGroup
 from utils.helper import join_name, load_image, load_image_from_dir
+from algorithm.custom_bfs import CustomBFS
 
 
 class AppData:
@@ -80,6 +81,13 @@ class AppData:
                 self.images, self.groups[0]
                 )
             self.drones.append(drone)
+        # for pos in self.cells:
+        #     print("#" * 50)
+        #     print(self.cells[pos], *self.cells[pos].neighboors)
+        #     self.cells[pos].neighboors = sorted(self.cells[pos].neighboors, key=lambda cell: (
+        #             0 if cell.data.zone == "priority" else 1,
+        #         ))
+        #     print(self.cells[pos], *self.cells[pos].neighboors)
 
     def load_all_images(self) -> dict[str, Any]:
         """Loading all required images from the assets

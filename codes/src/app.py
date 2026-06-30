@@ -23,6 +23,7 @@ class App:
             self.init_gui()
         self.sprite_group: SpriteGroup = SpriteGroup()
         self.data = AppData(parser, [self.sprite_group])
+        self.turn_index: int = 0
 
     def init_gui(self) -> None:
         """Initializing gui,
@@ -47,7 +48,7 @@ class App:
                 self.data.end_zone):
             raise MapError("Map error, Can't solve it")
 
-    def run(self, drones: list[Drone]) -> None:
+    def run(self, drones: list[list[Drone]]) -> None:
         """The function to run the program.
         Parameters:
             drones: list of drone.
@@ -70,13 +71,30 @@ class App:
             self.draw(self.screen, dt)
         pygame.quit()
 
-    def move_drones(self, drones: list[Drone], dt: float) -> None:
+    def move_drones(self, drones: list[list[Drone]], dt: float) -> None:
         """FUnction used to move all drones to the
         end zone.
         Parameters:
             drones: list of drone to move.
             dt: delta time.
         """
+        if self.turn_index >= len(drones):
+            # for turn in drones:
+            #     for drone in turn:
+            #         drone.kill()
+            return
+        counter = len(drones[self.turn_index])
+        index: int = 0
+        for drone in drones[self.turn_index]:
+            new_target: bool = drone.move_drone(dt)
+            if new_target:
+                index += 1
+        if index < counter:
+            return
+        for drone in drones[self.turn_index]:
+            if drone.target_index < len(drone.paths):
+                drone.target_index += 1
+        self.turn_index += 1 if self.turn_index < len(drones) else 0
 
     def update(self, dt: float) -> None:
         """update what we've got so far

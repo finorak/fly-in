@@ -76,7 +76,7 @@ our cell.
                      y * (CELL_HEIGHT + CELL_HEIGHT_GAP))
             )
         self.camera_offset: pygame.math.Vector2 = pygame.math.Vector2()
-        self.neighboors: set[Cell] = set()
+        self.neighboors: list[Cell] = []
 
     def update(self, dt: float) -> None:
         """For the hover effect, but for now,
@@ -88,7 +88,7 @@ our cell.
 
     def find_neighboor(
             self, connections: dict[str, Connection]
-            ) -> set['Cell']:
+            ) -> list['Cell']:
         """Finding the neighboor of this cell, based
         on the connections
         Parameters:
@@ -103,7 +103,7 @@ our cell.
                     continue
                 if next_cell == self or next_cell in self.neighboors:
                     continue
-                self.neighboors.add(next_cell)
+                self.neighboors.append(next_cell)
         return self.neighboors
 
     @property
@@ -133,5 +133,4 @@ our cell.
         Returns:
             the format we want to represent this class
         """
-        return f"{self.data.name} \
-{self.increment_drones_by}/{self.data.max_drones}"
+        return f"{self.data.name}"
