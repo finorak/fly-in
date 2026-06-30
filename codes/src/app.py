@@ -79,9 +79,6 @@ class App:
             dt: delta time.
         """
         if self.turn_index >= len(drones):
-            # for turn in drones:
-            #     for drone in turn:
-            #         drone.kill()
             return
         counter = len(drones[self.turn_index])
         index: int = 0

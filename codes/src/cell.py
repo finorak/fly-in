@@ -104,6 +104,13 @@ our cell.
                 if next_cell == self or next_cell in self.neighboors:
                     continue
                 self.neighboors.append(next_cell)
+            elif conn.endswith(self.data.name):
+                prev_cell = connections[conn].cell_a
+                if prev_cell.data.zone == 'blocked':
+                    continue
+                if prev_cell == self or prev_cell in self.neighboors:
+                    continue
+                self.neighboors.append(prev_cell)
         return self.neighboors
 
     @property

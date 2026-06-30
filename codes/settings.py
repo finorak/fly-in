@@ -10,7 +10,7 @@ from utils.helper import generate_color
 WIN_SIZE = (1680, 920)
 TITLE = "Fly in"
 
-DRONE_LIMITS = 200
+DRONE_LIMITS = 2000
 
 # CELL SETTINGS
 CELL_WIDTH = 80

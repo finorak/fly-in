@@ -69,10 +69,8 @@ class Parser:
                         raise MapError(
                                 f"Line {index}: Drone number must be "
                                 "between 0 and {DRONE_LIMITS}")
-                except Exception:
-                    raise MapError(
-                            f"Line {index}: value must "
-                            "be positiv integer.")
+                except Exception as e:
+                    raise MapError(f"Line {index}: {e}")
                 self.data['nb_drones'] = data
                 starter[0] = False
             if starter[1]:
@@ -116,6 +114,8 @@ class Parser:
             if len(splited_data) == 4:
                 metadata = self.get_hub_metadata(key, index, splited_data[3])
             hub: HubModel = HubModel(**data, **metadata)
+            if hub.max_drones < 1 and key not in ("start_hub", "end_hub"):
+                raise MapError("Max drones can't be less than 1")
             if duplicate_position(self.data['hub'], hub):
                 raise MapError("Position can't be duplicate")
             if key == "start_hub":

@@ -7,12 +7,11 @@ PYLINT := $(BIN_DIR)/pylint
 DOCSTRING := $(BIN_DIR)/flake8-docstrings
 UV := uv
 SRC := codes
-ARGS ?= "test_map.txt"
+ARGS ?= "maps/test_map/test_map2.txt"
 
 
 install:
 	@if [ -z "$(UV)" ]; then \
-		@echo "intalling uv"; \
 		curl -LsSf https://astral.sh/uv/install.sh | sh; \
 		export PATH="$$HOME/.local/bin/:$$PATH"; \
 	fi

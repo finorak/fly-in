@@ -62,7 +62,7 @@ class CustomBFS:
         if current_cell.is_full():
             for cell in other_neighboors:
                 new_best = self.cell_cost_to_reach_goal(cell, end_cell)
-                if new_best <= current_best:
+                if new_best < current_best:
                     return False
         return True
 
@@ -100,7 +100,7 @@ class CustomBFS:
             counter += 1
             hubs: list[Any] = []
             for neighboor in current_neighboors:
-                if neighboor in visited:
+                if neighboor in visited or neighboor in current_drone.paths:
                     continue
                 # Descision making if cell where
                 # to be full of connection full
