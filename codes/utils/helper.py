@@ -16,16 +16,17 @@ def get_args() -> Namespace:
     of codes.
     """
     parser: ArgumentParser = ArgumentParser(
-            description="A drone simulation app",
-            usage="uv run python -m codes --input [file]")
+        description="A drone simulation app",
+        usage="uv run python -m codes --input [file]"
+    )
     parser.add_argument(
-            "--input", type=str, help="Map file",
-            default="maps/easy/01_linear_path.txt"
-            )
+        "--input", type=str, help="Map file",
+        default="maps/easy/01_linear_path.txt"
+    )
     parser.add_argument(
-            "--visual", help="To show or not",
-            action="store_true"
-            )
+        "--visual", help="To show or not",
+        action="store_true"
+    )
     return parser.parse_args()
 
 
@@ -63,12 +64,14 @@ def load_image_from_dir(state: str) -> list[Any]:
         a list of available spries
     """
     return [
-            load_image(
-                'assets', 'img', state, file
-                ) for file in listdir(
-                    get_path('assets', 'img', state)
-                    )
-            ]
+        load_image(
+            'assets', 'img', state, file
+        ) for file in listdir(
+            get_path(
+                'assets', 'img', state
+            )
+        )
+    ]
 
 
 def generate_color(color_name: str,
@@ -110,10 +113,7 @@ def duplicate_position(hub_models: list[HubModel], hub: HubModel) -> bool:
     return False
 
 
-def cell_lead_to_goal(
-        current_zone: Any,
-        end_zone: Any,
-        ) -> bool:
+def cell_lead_to_goal(current_zone: Any, end_zone: Any) -> bool:
     """
     In case someone where to input
     a map that doesn't lead to the end goal,

@@ -39,7 +39,8 @@ class App:
         by calling it from the one that need this class
         """
         self.data.images['background'] = pygame.transform.scale(
-                self.data.images['background'], WIN_SIZE)
+            self.data.images['background'], WIN_SIZE
+        )
         self.data.create_cells()
         self.data.create_connections(self.sprite_group)
         self.data.create_drones()
@@ -80,7 +81,7 @@ class App:
         """
         if self.turn_index >= len(drones):
             return
-        counter = len(drones[self.turn_index])
+        counter: int = len(drones[self.turn_index])
         index: int = 0
         for drone in drones[self.turn_index]:
             new_target: bool = drone.move_drone(dt)
@@ -113,6 +114,6 @@ class App:
         """
         screen.fill("white")
         self.sprite_group.custom_draw(
-                screen,
-                self.data.images['background'], dt
-                )
+            screen,
+            self.data.images['background'], dt
+        )

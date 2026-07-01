@@ -11,10 +11,6 @@ ARGS ?= "maps/test_map/test_map2.txt"
 
 
 install:
-	@if [ -z "$(UV)" ]; then \
-		curl -LsSf https://astral.sh/uv/install.sh | sh; \
-		export PATH="$$HOME/.local/bin/:$$PATH"; \
-	fi
 	$(UV) sync
 
 run:
@@ -26,10 +22,10 @@ visual:
 		--visual --input $(ARGS)
 
 flake:
-	$(FLAKE) $(SRC)
+	$(UV) run $(PYTHON) $(FLAKE) $(SRC)
 
 lint: flake
-	$(MYPY) $(SRC)
+	$(UV) run $(PYTHON) $(MYPY) $(SRC)
 
 lint-strict: flake
 	$(MYPY) $(SRC) --strict

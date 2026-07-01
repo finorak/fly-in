@@ -2,7 +2,7 @@ import re
 from typing import Any
 
 from models.base_model import ConnectionModel, HubModel
-from settings import DRONE_LIMITS, PATTERN, ZONES
+from settings import PATTERN, ZONES
 from utils.errors import MapError
 from utils.helper import (
     duplicate_position,
@@ -20,10 +20,10 @@ class Parser:
             map_file: the location of the map
         """
         self.data: dict[str, Any] = {
-                'nb_drones': 1,
-                'hub': [],
-                'connection': []
-                }
+            'nb_drones': 1,
+            'hub': [],
+            'connection': []
+        }
         self.hubs: dict[str, HubModel] = {}
         self.connections: dict[str, ConnectionModel] = {}
         self.key_found: set[str] = set()
@@ -65,10 +65,10 @@ class Parser:
                     raise MapError(f"Line {index}: must be 'nb_coders'.")
                 try:
                     data = int(curr_line[1].strip())
-                    if data < 0 or data > DRONE_LIMITS:
+                    if data < 0:
                         raise MapError(
-                                f"Line {index}: Drone number must be "
-                                "between 0 and {DRONE_LIMITS}")
+                            "Drone number must be > 0"
+                        )
                 except Exception as e:
                     raise MapError(f"Line {index}: {e}")
                 self.data['nb_drones'] = data
@@ -107,10 +107,10 @@ class Parser:
             if name in self.hubs:
                 raise MapError(f"Line {index}: Hub already in")
             data: dict[Any, Any] = {
-                    'name': name,
-                    'x': x,
-                    'y': y
-                    }
+                'name': name,
+                'x': x,
+                'y': y
+            }
             if len(splited_data) == 4:
                 metadata = self.get_hub_metadata(key, index, splited_data[3])
             hub: HubModel = HubModel(**data, **metadata)
@@ -128,8 +128,8 @@ class Parser:
             raise MapError(f"Line {index}: {e}")
 
     def get_hub_metadata(
-            self, hub_key: str, index: int, value: str
-            ) -> dict[str, str]:
+        self, hub_key: str, index: int, value: str
+    ) -> dict[str, str]:
         """Getting the metadata of the current hub
         Parameters:
             hub_key: the key of the current hub
@@ -156,11 +156,12 @@ class Parser:
             if key == 'zone':
                 if key_value not in ZONES:
                     raise MapError(f'Line {index}: Zone not recognized.')
-                if hub_key in (
+                if key_value == "blocked" and hub_key in (
                         "start_hub", "end_hub"
-                        ) and key_value == "blocked":
+                ):
                     raise MapError(
-                            f"Line {index}: {hub_key} can't be blocked")
+                        f"Line {index}: {hub_key} can't be blocked"
+                    )
                 data['zone'] = key_value
             elif key == 'max_drones':
                 if not key_value.isdigit():
@@ -202,14 +203,15 @@ class Parser:
                 raise MapError("Hub name not recognized.")
             if len(splited_value) == 2:
                 metadata = self.get_connection_metadata(
-                        index, splited_value[1])
+                    index, splited_value[1]
+                )
             data: dict[str, Any] = {
-                    'hub_a': self.hubs[hub_a],
-                    'hub_b': self.hubs[hub_b]
-                    }
+                'hub_a': self.hubs[hub_a],
+                'hub_b': self.hubs[hub_b]
+            }
             connection: ConnectionModel = ConnectionModel(
-                    **data, **metadata, connecton_name=connections
-                    )
+                **data, **metadata, connecton_name=connections
+            )
             if f"{hub_a}-{hub_b}" in self.connections \
                     or f"{hub_b}-{hub_a}" in self.connections:
                 raise MapError("Duplicate connection")
@@ -220,8 +222,8 @@ class Parser:
             raise MapError(f"Line {index}: {e}")
 
     def get_connection_metadata(
-            self, index: int, value: str
-            ) -> dict[str, int]:
+        self, index: int, value: str
+    ) -> dict[str, int]:
         """Getting the metadata of the current connection.
         Parameters:
             index: the current line of the connection inside

@@ -10,9 +10,10 @@ import random
 class DroneData:
     """Drone data container
     """
-    def __init__(self, drone_id: int, start_zone: Cell, end_zone: Cell,
-                 frames: dict[str, list[pygame.Surface]]
-                 ) -> None:
+    def __init__(
+        self, drone_id: int, start_zone: Cell,
+        end_zone: Cell, frames: dict[str, list[pygame.Surface]]
+    ) -> None:
         """Constructor for a drone instance.
         Parameters:
             start_zone: where the drone start
@@ -21,13 +22,14 @@ class DroneData:
                     state a drone can have
         """
         self.drone_id = f"D{drone_id}"
-        self.start_zone = start_zone
-        self.end_zone = end_zone
-        self.frames = frames
+        self.start_zone: Cell = start_zone
+        self.end_zone: Cell = end_zone
+        self.frames: dict[str, list[pygame.Surface]] = frames
         self.frame_speed: float = 8
-        self.speed: float = 600
+        self.speed: float = 600  # AT SCHOOL
+        # self.speed: float = 300  # at home
         self.frame_index: float = random.randint(0, len(frames))
-        self.state = 'idl'
+        self.state: str = 'idl'
 
 
 class Drone(pygame.sprite.Sprite):
@@ -36,7 +38,7 @@ class Drone(pygame.sprite.Sprite):
     def __init__(
             self, drone_id: int, start_zone: Cell,
             end_zone: Cell, frames: dict[str, list[pygame.Surface]],
-            *groups: pygame.sprite.Group | Any,
+            *groups: Any,
     ) -> None:
         """Constructor for our drones.
         Parameters:
@@ -50,7 +52,7 @@ class Drone(pygame.sprite.Sprite):
         super().__init__(*groups)
         self.frames: dict[str, list[pygame.Surface]] = frames
         self.data: DroneData = DroneData(
-                drone_id, start_zone, end_zone, frames)
+            drone_id, start_zone, end_zone, frames)
         self.image: pygame.Surface = frames[self.data.state][0]
         self.rect: pygame.Rect = self.image.get_rect(
             center=self.place_drone(start_zone)
@@ -102,11 +104,13 @@ class Drone(pygame.sprite.Sprite):
         dy = target_y - self.rect.centery
         distance = (dx ** 2 + dy ** 2) ** 0.5
         if distance > 1:
+            self.data.state = "walk"
             t = min(self.data.speed * dt, distance)
             self.rect.x += (dx / distance) * t
             self.rect.y += (dy / distance) * t
             return False
         self.current_zone = target_zone
+        self.data.state = "idl"
         return True
 
     def __str__(self) -> str:

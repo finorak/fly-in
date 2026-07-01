@@ -1,10 +1,11 @@
 import pygame
 from settings import (
-        CELL_HEIGHT, CELL_HEIGHT_GAP,
-        CELL_WIDTH, CELL_WIDTH_GAP, ZONES
-        )
+    CELL_HEIGHT, CELL_HEIGHT_GAP,
+    CELL_WIDTH, CELL_WIDTH_GAP, ZONES
+)
 from src.connection import Connection
 from src.groups.groups import SpriteGroup
+from utils.helper import generate_color
 
 
 class CellData:
@@ -37,13 +38,12 @@ class Cell(pygame.sprite.Sprite):
     cell.
     """
     def __init__(
-            self, x: int, y: int, name: str,
-            dimension: tuple[int, int, int, int],
-            groups: list[SpriteGroup],
-            win_pos: tuple[int, int], image: pygame.Surface,
-            max_drones: int = 1, color: str = 'white',
-            zone: str = 'normal'
-            ) -> None:
+        self, x: int, y: int, name: str,
+        dimension: tuple[int, int, int, int],
+        groups: list[SpriteGroup], win_pos: tuple[int, int],
+        image: pygame.Surface, max_drones: int = 1,
+        color: str = 'white', zone: str = 'normal'
+    ) -> None:
         """Constructor for a cell instance.
         Parameters:
             x: x coordinate of the cell
@@ -63,18 +63,21 @@ our cell.
         super().__init__(*groups)
         self.dimension: tuple[int, int, int, int] = dimension
         self.data = CellData(
-                max_drones, zone,
-                name, (x - dimension[2], y - dimension[3]), win_pos=win_pos)
+            max_drones, zone,
+            name, (x - dimension[2], y - dimension[3]), win_pos=win_pos
+        )
         self.image: pygame.Surface = pygame.Surface(
             (CELL_WIDTH, CELL_HEIGHT)
-            )
+        )
         self._nb_drones: int = 0
-        self.color = color
-        self.image.fill(self.color)
+        self.color = generate_color(
+            color_name=color, falback_color=ZONES[self.data.zone]['color']
+        )
+        # self.image.fill(self.color)
         self.rect: pygame.Rect = self.image.get_rect(
             topleft=(x * (CELL_WIDTH + CELL_WIDTH_GAP),
                      y * (CELL_HEIGHT + CELL_HEIGHT_GAP))
-            )
+        )
         self.camera_offset: pygame.math.Vector2 = pygame.math.Vector2()
         self.neighboors: list[Cell] = []
 
@@ -84,11 +87,12 @@ our cell.
         Parameters:
             dt: delta time
         """
+        self.image.fill(self.color)
         ...
 
     def find_neighboor(
-            self, connections: dict[str, Connection]
-            ) -> list['Cell']:
+        self, connections: dict[str, Connection]
+    ) -> list['Cell']:
         """Finding the neighboor of this cell, based
         on the connections
         Parameters:

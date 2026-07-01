@@ -20,11 +20,14 @@ class SpriteGroup(pygame.sprite.Group):
         self.zoom_scale: float = 1
         self.internal_surf_size = WIN_SIZE
         self.internal_surf = pygame.Surface(
-                (self.internal_surf_size), pygame.SRCALPHA)
+            (self.internal_surf_size), pygame.SRCALPHA
+        )
         self.internal_rect = self.internal_surf.get_rect(
-                center=(WIN_SIZE[0] // 2, WIN_SIZE[1] // 2))
+            center=(WIN_SIZE[0] // 2, WIN_SIZE[1] // 2)
+        )
         self.internal_surf_size_vector = pygame.math.Vector2(
-                self.internal_surf_size)
+            self.internal_surf_size
+        )
 
     def update_offset(self, dt: float) -> None:
         """
@@ -53,7 +56,7 @@ class SpriteGroup(pygame.sprite.Group):
     def custom_draw(
             self, screen: pygame.Surface,
             background_image: pygame.Surface, dt: float
-            ) -> None:
+    ) -> None:
         """A custom draw function that let us
         move the camera to the way we want it
         Parameters:
@@ -63,16 +66,18 @@ class SpriteGroup(pygame.sprite.Group):
         """
         self.update_offset(dt)
         self.internal_surf.blit(background_image)
-        conn_sprites = [
-                sprite for sprite in self.sprites()
-                if hasattr(sprite, 'network')]
-        cell_sprites = [
-                sprite for sprite in self.sprites()
-                if hasattr(sprite, 'neighboors')]
-        drone_sprites = [
-                sprite for sprite in self.sprites()
-                if hasattr(sprite, 'move')
-                ]
+        conn_sprites: list[Any] = [
+            sprite for sprite in self.sprites()
+            if hasattr(sprite, 'network')
+        ]
+        cell_sprites: list[Any] = [
+            sprite for sprite in self.sprites()
+            if hasattr(sprite, 'neighboors')
+        ]
+        drone_sprites: list[Any] = [
+            sprite for sprite in self.sprites()
+            if hasattr(sprite, 'move')
+        ]
         for sprites in [conn_sprites, cell_sprites, drone_sprites]:
             for sprite in sorted(sprites,
                                  key=lambda sprite: sprite.rect.centery):
@@ -81,9 +86,9 @@ class SpriteGroup(pygame.sprite.Group):
                     offset = sprite.rect.topleft + self.offset
                 self.internal_surf.blit(sprite.image, offset)
         scaled_surf = pygame.transform.scale(
-                self.internal_surf,
-                self.internal_surf_size_vector * self.zoom_scale
-                )
+            self.internal_surf,
+            self.internal_surf_size_vector * self.zoom_scale
+        )
         scaled_rect = scaled_surf.get_rect(
-                center=(WIN_SIZE[0] // 2, WIN_SIZE[1] // 2))
+            center=(WIN_SIZE[0] // 2, WIN_SIZE[1] // 2))
         screen.blit(scaled_surf, scaled_rect)

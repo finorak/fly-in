@@ -7,21 +7,54 @@ from src.connection import Connection
 
 
 class CustomBFS:
+    """Algorithme clss that let us.
+    solve the graph.
+    """
     def __init__(
         self,
         drones: list[Any],
         cells: dict[tuple[int, int], Any],
         connecitons: dict[str, Connection],
     ) -> None:
+        """Constructor for our customBFS.
+
+        Initializing attributes.
+        Parameters:
+            drones: list of drones or any other object
+                    that need to travers the graph
+                    but for now, It's just a drone
+            cells: a dict of cells, this isn't used
+                    yet in my approach, but I might
+                    use it later on as i customize it.
+            connecitons: dict containing all the connecitons
+                        of drones, we then know, which hub is
+                        connected to whom by looking it up
+                        in this data
+        """
         self.drones = drones
         self.cells = cells
         self.connections = connecitons
-        self.drones_cpy: list[list[Any]] = []
+        self.drones_cpy: Any = []
 
     @staticmethod
     def cell_cost_to_reach_goal(
-            current_cell: Any, end_zone: Any
-        ) -> float:
+        current_cell: Any, end_zone: Any
+    ) -> float:
+        """Calculate cost of cell to reach goal.
+
+        This function will calculate the approximate
+        cost to reach end_zone. As we fill the
+        neighbors of the current cell, we increment
+        a counter, till we found the end_zone. This
+        will give as an arbitrary cost to reach
+        zone
+        Parameters:
+            current_cell: the cell to calculate the cost
+            end_zone: The goal
+        Returns:
+            a float representing the cost, inf if goal
+            impossible to be reached by that cell
+        """
         neighboors = deque([current_cell])
         came_from: dict[Any, Any | None] = {current_cell: None}
         visited: set[Any] = set()
@@ -44,10 +77,28 @@ class CustomBFS:
         return cost
 
     def can_go(
-            self, current_cell: Any,
-            end_cell: Any, connection: Connection | None,
-            neighboors: set[Any]
-            ) -> bool:
+        self, current_cell: Any, end_cell: Any,
+        connection: Connection | None, neighboors: set[Any]
+    ) -> bool:
+        """Descision making for the n first neightbors.
+
+        To get the optimal path, we first of all, need to
+        know if the drone can go that cell. To achieve that
+        we verify the first n neighbor. If let's say the first
+        neighbor full or connection to that is full, we must verify
+        if any other cell in the neigbors can give us optimal
+        ways, if yes, we skip the full one, overwise, we consider it
+        valid so potentialy wayting a turn.
+        Parameters:
+            current_cell: The cell to verify
+            end_cell: the goal
+            connection: the connection to that current_cell from
+                        the current_cell of the drone
+            neighboors: all the neighboors of the cell
+        Returns:
+            boolean value that indicat to us if the cell is valid
+            or not
+        """
         if current_cell == end_cell:
             return True
         current_best = self.cell_cost_to_reach_goal(current_cell, end_cell)
@@ -173,6 +224,9 @@ class CustomBFS:
                 turn_recorder.append(drone)
                 if next_hub.data.zone == "restricted":
                     drone.restricted_next_zone = next_hub
+                    # incrementing it so that the next
+                    # drone knows, that that cell will
+                    # be occupied (is occupied)
                     next_hub.increment_drones_by = 1
                     drone.current_conneciton = connection
                     drone.current_zone.increment_drones_by = -1

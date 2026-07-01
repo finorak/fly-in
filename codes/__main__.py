@@ -1,6 +1,4 @@
 import sys
-
-import pygame
 from algorithm.custom_bfs import CustomBFS
 from parser.parsing import Parser
 from src.app import App
@@ -18,8 +16,10 @@ def main() -> None:
     # a parrameters
     app.init()
     turn = CustomBFS(
-            app.data.drones, app.data.cells, app.data.dict_connections
-            )
+        app.data.drones,
+        app.data.cells,
+        app.data.dict_connections
+    )
     turn.solve()
     # this function is same as init_gui
     if args.visual:
@@ -27,4 +27,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(e, file=sys.stderr)

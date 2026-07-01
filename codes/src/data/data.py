@@ -7,7 +7,6 @@ from src.connection import Connection
 from src.drone import Drone
 from src.groups.groups import SpriteGroup
 from utils.helper import join_name, load_image, load_image_from_dir
-from algorithm.custom_bfs import CustomBFS
 
 
 class AppData:
@@ -59,11 +58,10 @@ class AppData:
             conn_name: str = join_name(cell_a, cell_b)
             reversed_conn_name: str = join_name(cell_b, cell_a)
             connection: Connection = Connection(
-                cell_a, cell_b,
-                group=sprite_group,
+                cell_a, cell_b, group=sprite_group,
                 max_link_capacity=conn.max_link_capacity,
-                conn_name=conn_name,
-                )
+                conn_name=conn_name
+            )
             self.dict_connections[conn_name] = connection
             self.dict_connections[reversed_conn_name] = connection
         for pos in self.cells:
@@ -79,15 +77,8 @@ class AppData:
                 i, self.named_cell[self.parser.start],
                 self.named_cell[self.parser.end],
                 self.images, self.groups[0]
-                )
+            )
             self.drones.append(drone)
-        # for pos in self.cells:
-        #     print("#" * 50)
-        #     print(self.cells[pos], *self.cells[pos].neighboors)
-        #     self.cells[pos].neighboors = sorted(self.cells[pos].neighboors, key=lambda cell: (
-        #             0 if cell.data.zone == "priority" else 1,
-        #         ))
-        #     print(self.cells[pos], *self.cells[pos].neighboors)
 
     def load_all_images(self) -> dict[str, Any]:
         """Loading all required images from the assets
@@ -95,12 +86,13 @@ class AppData:
         """
         data: dict[str, Any] = {}
         data['background'] = load_image(
-                'assets', 'img', 'background',
-                'background 1', '1.png')
+            'assets', 'img', 'background',
+            'background 1', '1.png'
+        )
         data['zone'] = load_image(
-                'assets', 'img', 'platform',
-                'platform.png'
-                )
+            'assets', 'img', 'platform',
+            'platform.png'
+        )
         data['idl'] = load_image_from_dir('idl')
         data['walk'] = load_image_from_dir('walk')
         data['landing'] = load_image_from_dir('landing')

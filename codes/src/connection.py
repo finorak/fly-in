@@ -35,6 +35,7 @@ class Connection(pygame.sprite.Sprite):
         """Update the line drawing and position based on cell positions.
         This follows the camera offset automatically since the sprite
         is drawn relative to the screen during custom_draw.
+        I was helped by google ai for this one.
         """
         start_pos = self.cell_a.rect.center
         end_pos = self.cell_b.rect.center
@@ -50,9 +51,9 @@ class Connection(pygame.sprite.Sprite):
         local_end_x = end_pos[0] - min_x
         local_end_y = end_pos[1] - min_y
         pygame.draw.line(
-                self.image, LINE_COLOR,
-                (local_start_x, local_start_y),
-                (local_end_x, local_end_y), LINE_SIZE)
+            self.image, LINE_COLOR,
+            (local_start_x, local_start_y),
+            (local_end_x, local_end_y), LINE_SIZE)
         self.rect = self.image.get_frect(topleft=(min_x, min_y))
 
     def update(self, dt: float = 0) -> None:
