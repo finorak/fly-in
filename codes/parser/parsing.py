@@ -12,10 +12,19 @@ from utils.helper import (
 
 
 class Parser:
-    """A class for parsing the map
+    """
+    A class for parsing the map.
+
+    This class help us parse the data, so
+    that even if we where to put another
+    thing to parse, it is more portable then.
     """
     def __init__(self, map_file: str) -> None:
-        """Constructor for an instance of Parser
+        """
+        Constructor for an instance of Parser
+
+        Initializing all the value of the parser
+        instance.
         Parameters:
             map_file: the location of the map
         """
@@ -30,10 +39,19 @@ class Parser:
         self.conns: list[ConnectionModel] = []
         # EXTRACTING THE MAP FILES
         self.extract_map(map_file)
+        if 'start_hub' not in self.key_found or \
+                'end_hub' not in self.key_found:
+            raise MapError("Some keys or missing in the map.")
+        if not self.connections:
+            raise MapError("Connection missing")
         self.size: tuple[int, int, int, int] = get_dimension(self.hubs)
 
     def extract_map(self, map_file: str) -> None:
-        """Extracting input file
+        """
+        Extracting input file
+
+        Map extraction, iterating over the
+        map file and trying to extract the value.
         Parameters:
             map_file: the location of the map
         """
@@ -62,7 +80,10 @@ class Parser:
                 raise MapError(f"Line {index}: Start hub already exist.")
             if starter[0]:
                 if key != 'nb_drones':
-                    raise MapError(f"Line {index}: must be 'nb_coders'.")
+                    raise MapError(
+                            f"Line {index}: first "
+                            "line must be 'nb_coders'."
+                    )
                 try:
                     data = int(curr_line[1].strip())
                     if data < 0:
@@ -86,7 +107,10 @@ class Parser:
             self.key_found.add(key)
 
     def extract_hub(self, index: int, key: str, value: str) -> None:
-        """Ectracting the hub from the key, value we got
+        """
+        Hub extraction.
+
+        Ectracting the hub from the key, value we got
         Parameters:
             index: the current line we are in from the input file
             key: keyword of the hub.
@@ -130,7 +154,11 @@ class Parser:
     def get_hub_metadata(
         self, hub_key: str, index: int, value: str
     ) -> dict[str, str]:
-        """Getting the metadata of the current hub
+        """
+        Getting the metadata of the current hub
+
+        Using the value we got, we try to extract
+        the metada.
         Parameters:
             hub_key: the key of the current hub
             index: the current line of the hub.
@@ -174,7 +202,10 @@ class Parser:
         return data
 
     def extract_connecion(self, index: int, key: str, value: str) -> None:
-        """Extracting the connection from the key, value we got.
+        """
+        Connection extraction.
+
+        Extracting the connection from the key, value we got.
         Parameters:
             index: the current line we are in from the input file
             key: keyword of the hub.
@@ -224,7 +255,10 @@ class Parser:
     def get_connection_metadata(
         self, index: int, value: str
     ) -> dict[str, int]:
-        """Getting the metadata of the current connection.
+        """
+        Connection metadata extractor.
+
+        Getting the metadata of the current connection.
         Parameters:
             index: the current line of the connection inside
             the input files

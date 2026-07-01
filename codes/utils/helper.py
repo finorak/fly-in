@@ -10,7 +10,10 @@ from utils.errors import MapError
 
 
 def get_args() -> Namespace:
-    """Using argparse, we can add
+    """
+    Argument parser.
+
+    Using argparse, we can add
     another argument without modifying
     to many codes, just adding a few lines
     of codes.
@@ -24,15 +27,16 @@ def get_args() -> Namespace:
         default="maps/easy/01_linear_path.txt"
     )
     parser.add_argument(
-        "--visual", help="To show or not",
+        "--visual", help="To show visual or not",
         action="store_true"
     )
     return parser.parse_args()
 
 
 def get_path(*args: str) -> Any:
-    """Getting the absolute path of the
-    file
+    """Getting absolute path of args.
+
+    Getting the absolute path of the file
     Parameters:
         args: a list of string to represent the path.
     """
@@ -40,7 +44,9 @@ def get_path(*args: str) -> Any:
 
 
 def load_image(*args: str) -> pygame.Surface:
-    """Getting the loaded images.
+    """Getting and loading image.
+
+    Getting the loaded images.
     Parameters:
         args: a list of string to represent the path
     Returns:
@@ -78,6 +84,10 @@ def generate_color(color_name: str,
                    index: Optional[int] = None,
                    falback_color: str = "white") -> Any:
     """Generating the color requested by the metadata.
+
+    Using the modul webcolors, we get the color,
+    this one, contain a lot more color than the
+    the standard.
     Parameters:
         color_name: color we want to extract
         index: index at which we got the metadata
@@ -95,11 +105,15 @@ def generate_color(color_name: str,
     except ValueError:
         if index is None:
             return webcolors.name_to_hex(falback_color)
+        # This sould never happen, LOL
         raise MapError(f"Line {index}: Color invalid")
 
 
 def duplicate_position(hub_models: list[HubModel], hub: HubModel) -> bool:
-    """Verifying if the cell's position is
+    """
+    If the hub's position is already used.
+
+    Verifying if the cell's position is
     already in the list
     Parameters:
         hub_models: a dict of hub_model
@@ -115,6 +129,8 @@ def duplicate_position(hub_models: list[HubModel], hub: HubModel) -> bool:
 
 def cell_lead_to_goal(current_zone: Any, end_zone: Any) -> bool:
     """
+    Does the cell lead to goal.
+
     In case someone where to input
     a map that doesn't lead to the end goal,
     we recursively go in each hub neighboor of
@@ -144,7 +160,10 @@ can be solved or not
 
 
 def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
-    """Getting the dimension, Just iterating
+    """
+    Getting the dimension.
+
+    Just iterating
     over the hubs and get the maximum between
     the x and y for all the hubs
     Parameters:
@@ -177,7 +196,10 @@ def get_dimension(hubs: dict[str, HubModel]) -> tuple[int, int, int, int]:
 
 
 def join_name(cell_a: Any, cell_b: Any) -> str:
-    """This seem to be repetitive function
+    """
+    Getting connection name.
+
+    This seem to be repetitive function
     so we englobe it into this function
     Parameters:
         cell_a: a Cell
@@ -190,7 +212,10 @@ def join_name(cell_a: Any, cell_b: Any) -> str:
 
 
 def is_numeric(value: str) -> bool:
-    """A simple function that check if
+    """
+    Weather the value is a numerical or not.
+
+    A simple function that check if
     a value is numerical or not
     because the original, numeric
     done't tell us if the vlau is a negative
@@ -214,7 +239,10 @@ def is_numeric(value: str) -> bool:
 
 
 def quit_app() -> None:
-    """This function will be used for the algorithm.
+    """
+    Prevent us from entering loop.
+
+    This function will be used for the algorithm.
     so that even in the process of solving the graph
     we can still quit.
     """

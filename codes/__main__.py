@@ -1,4 +1,5 @@
 import sys
+
 from algorithm.custom_bfs import CustomBFS
 from parser.parsing import Parser
 from src.app import App
@@ -6,8 +7,7 @@ from utils.helper import get_args
 
 
 def main() -> None:
-    """Entry point of the program
-    """
+    """Entry point of the program."""
     args = get_args()
     parser = Parser(args.input)
     app = App(parser, args.visual)

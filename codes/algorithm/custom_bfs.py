@@ -1,13 +1,16 @@
+import sys
 from collections import deque
 from typing import Any
 
-from utils.helper import join_name, quit_app
-import sys
 from src.connection import Connection
+from utils.helper import join_name, quit_app
 
 
 class CustomBFS:
-    """Algorithme clss that let us.
+    """
+    Class for BFS algorithm.
+
+    Algorithme clss that let us.
     solve the graph.
     """
     def __init__(
@@ -40,7 +43,8 @@ class CustomBFS:
     def cell_cost_to_reach_goal(
         current_cell: Any, end_zone: Any
     ) -> float:
-        """Calculate cost of cell to reach goal.
+        """
+        Calculate cost of cell to reach goal.
 
         This function will calculate the approximate
         cost to reach end_zone. As we fill the
@@ -80,7 +84,8 @@ class CustomBFS:
         self, current_cell: Any, end_cell: Any,
         connection: Connection | None, neighboors: set[Any]
     ) -> bool:
-        """Descision making for the n first neightbors.
+        """
+        Descision making for the n first neightbors.
 
         To get the optimal path, we first of all, need to
         know if the drone can go that cell. To achieve that
@@ -120,7 +125,10 @@ class CustomBFS:
     def algorithme(
         self, current_drone: Any, connections: dict[str, Connection]
     ) -> list[Any]:
-        """The algorithme we use to find the best path based on the current
+        """
+        Finding the best path.
+
+        The algorithme we use to find the best path based on the current
         zone of the drone.
         At each step of the drone, we loo, for the best
         next cell, from there.
@@ -185,7 +193,10 @@ class CustomBFS:
         return paths[1:]
 
     def solve(self) -> None:
-        """Just an api that communicate with algorithme.
+        """
+        API for solver.
+
+        Just an api that communicate with algorithme.
         We iterate the list of drones, till there is no
         drone anymore.
         and at each step, we get the paths we got from

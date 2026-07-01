@@ -4,7 +4,6 @@ PYTHON := $(BIN_DIR)/python
 FLAKE := $(BIN_DIR)/flake8
 MYPY := $(BIN_DIR)/mypy
 PYLINT := $(BIN_DIR)/pylint
-DOCSTRING := $(BIN_DIR)/flake8-docstrings
 UV := uv
 SRC := codes
 ARGS ?= "maps/test_map/test_map2.txt"

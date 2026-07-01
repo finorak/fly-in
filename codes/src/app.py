@@ -1,18 +1,25 @@
 import pygame
 from parser.parsing import Parser
-from src.drone import Drone
 from settings import TITLE, WIN_SIZE
 from src.data.data import AppData
+from src.drone import Drone
 from src.groups.groups import SpriteGroup
 from utils.errors import MapError
 from utils.helper import cell_lead_to_goal
 
 
 class App:
-    """The main app for our application
+    """
+    The main app for our application.
+
+    To interact with our application we use this.
     """
     def __init__(self, parser: Parser, visual: bool = True) -> None:
-        """Constructor for an app instance
+        """
+        Constructor for an app instance.
+
+        Initializing all the value of an
+        app instance.
         Parameters:
             parser: class containing the parsed data.
             visual: whever to show the visualisation
@@ -23,17 +30,22 @@ class App:
             self.init_gui()
         self.sprite_group: SpriteGroup = SpriteGroup()
         self.data = AppData(parser, [self.sprite_group])
-        self.turn_index: int = 0
+        self.turn_index: int = -1
 
     def init_gui(self) -> None:
-        """Initializing gui,
+        """
+        Gui initializing.
+
         THis will be only used, if visual is True
         """
         self.screen = pygame.display.set_mode(WIN_SIZE, pygame.SCALED)
         pygame.display.set_caption(TITLE)
 
     def init(self) -> None:
-        """We avoid lunching any function from
+        """
+        Initializing other attributes.
+
+        We avoid lunching any function from
         the init method, so that's why we
         use this fuinction to do that task
         by calling it from the one that need this class
@@ -50,7 +62,10 @@ class App:
             raise MapError("Map error, Can't solve it")
 
     def run(self, drones: list[list[Drone]]) -> None:
-        """The function to run the program.
+        """
+        Program luncher.
+
+        The function to run the program.
         Parameters:
             drones: list of drone.
         """
@@ -58,6 +73,9 @@ class App:
         clock = pygame.time.Clock()
         while running:
             dt = clock.tick() / 1000
+            if pygame.key.get_just_pressed()[pygame.K_SPACE]:
+                if self.turn_index < 0:
+                    self.turn_index += 1
             self.move_drones(drones, dt)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -73,13 +91,16 @@ class App:
         pygame.quit()
 
     def move_drones(self, drones: list[list[Drone]], dt: float) -> None:
-        """FUnction used to move all drones to the
+        """
+        Drones movement.
+
+        Function used to move all drones to the
         end zone.
         Parameters:
             drones: list of drone to move.
             dt: delta time.
         """
-        if self.turn_index >= len(drones):
+        if self.turn_index < 0 or self.turn_index >= len(drones):
             return
         counter: int = len(drones[self.turn_index])
         index: int = 0
@@ -95,7 +116,10 @@ class App:
         self.turn_index += 1 if self.turn_index < len(drones) else 0
 
     def update(self, dt: float) -> None:
-        """update what we've got so far
+        """
+        Updating the screen.
+
+        Update what we've got so far
         on the screen.
         Parameters:
             dt: delta time
@@ -104,7 +128,10 @@ class App:
         self.sprite_group.update(dt)
 
     def draw(self, screen: pygame.Surface, dt: float) -> None:
-        """Drawing the sprites, images, etc
+        """
+        Drawing on the screen.
+
+        Drawing the sprites, images, etc
         into the window.
         Parameters:
             screen: where to render
