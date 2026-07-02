@@ -173,6 +173,7 @@ class Parser:
         string = re.search(PATTERN, value)
         if not string:
             raise MapError(f"Line {index}: Metadata error.")
+        starter: list[bool] = [False, False, False]
         splitted_string: list[str] = string.group().strip('[]').split()
         data: dict[str, Any] = {}
         for el in splitted_string:
@@ -182,6 +183,10 @@ class Parser:
             key: str = splited[0].strip()
             key_value: str = splited[1].strip()
             if key == 'zone':
+                if starter[0]:
+                    raise MapError(
+                        "Duplicate zone detected"
+                    )
                 if key_value not in ZONES:
                     raise MapError(f'Line {index}: Zone not recognized.')
                 if key_value in ("blocked", "restricted") and hub_key in (
@@ -192,12 +197,23 @@ class Parser:
                         "or restricted"
                     )
                 data['zone'] = key_value
+                starter[0] = True
             elif key == 'max_drones':
+                if starter[1]:
+                    raise MapError(
+                        "Duplicate max drones"
+                    )
                 if not key_value.isdigit():
                     raise MapError(f"Line {index}: Value must be integer.")
                 data[key] = int(key_value)
+                starter[1] = True
             elif key == 'color':
+                if starter[2]:
+                    raise MapError(
+                        "DUplicate color."
+                    )
                 data[key] = key_value
+                starter[2] = True
             else:
                 raise MapError(f"Line {index}: Value not recognized.")
         return data
