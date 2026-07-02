@@ -26,8 +26,7 @@ class App:
                     or not, by default we see
         """
         pygame.init()
-        if visual:
-            self.init_gui()
+        self.visual = visual
         self.sprite_group: SpriteGroup = SpriteGroup()
         self.data = AppData(parser, [self.sprite_group])
         self.turn_index: int = -1
@@ -60,6 +59,8 @@ class App:
                 self.data.start_zone[0],
                 self.data.end_zone):
             raise MapError("Map error, Can't solve it")
+        if self.visual:
+            self.init_gui()
 
     def run(self, drones: list[list[Drone]]) -> None:
         """

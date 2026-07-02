@@ -1,10 +1,10 @@
+import random
 from typing import Any
 
 import pygame
 from settings import CELL_HEIGHT_GAP
 from src.cell import Cell
 from src.connection import Connection
-import random
 
 
 class DroneData:
