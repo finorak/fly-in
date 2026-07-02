@@ -184,11 +184,12 @@ class Parser:
             if key == 'zone':
                 if key_value not in ZONES:
                     raise MapError(f'Line {index}: Zone not recognized.')
-                if key_value == "blocked" and hub_key in (
+                if key_value in ("blocked", "restricted") and hub_key in (
                         "start_hub", "end_hub"
                 ):
                     raise MapError(
-                        f"Line {index}: {hub_key} can't be blocked"
+                        f"Line {index}: {hub_key} can't be blocked "
+                        "or restricted"
                     )
                 data['zone'] = key_value
             elif key == 'max_drones':

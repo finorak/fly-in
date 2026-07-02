@@ -88,7 +88,6 @@ our cell.
             dt: delta time
         """
         self.image.fill(self.color)
-        ...
 
     def find_neighboor(
         self, connections: dict[str, Connection]
